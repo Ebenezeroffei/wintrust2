@@ -1,0 +1,237 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <link rel="stylesheet" href="{% static 'app\bootstrap.min.css' %}">
+    <style>
+        /* Nav Bar Designs */
+        nav{
+            background-color: #333333;
+            position: fixed;
+            width: 100%;
+            padding: 10px 0px;
+            top: 0px;
+            z-index: 20;
+        }
+        nav .container-md > a{
+            font-size: 25px;
+            color: #159fdc;
+        }
+        nav .container-md > a:hover{
+            text-decoration: none;
+        }
+        
+        /* Options */
+        #options{
+            display: inline-block;
+            float: right;
+        }
+        #options div{
+            display: inline-block;
+            margin: 0px 5px;
+        }
+        /* Cart */
+        #options #cart{
+            position: relative;
+        }
+        #options a{
+            color: #159fdc;
+            font-size: 13px;
+            text-align: center;
+        }
+        #options a:hover{
+            text-decoration: none;
+        }
+        #options #cart > a > span{
+            position: absolute;
+            color: white;
+            background: #159fdc;
+            padding: 1.5px;
+            text-align: center;
+            border-radius: 20px;
+            font-size: 11px;
+            line-height: 13px;
+            right: 4px;
+            bottom: 40px;
+            
+        }
+        /* Search bar container */
+        #search-container{
+/*            background: red;*/
+            position: relative;
+            margin-top: 20px;
+        }
+        #search-container > input[type = 'text']{
+            background-image: url("{% static 'app/images/search.png' %}");
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 5px center;
+            border: thin solid #333333;
+            border-radius: 10px;
+            padding: 3px 10px 3px 30px;
+            color: #777;
+            font-size: 1.1rem;
+            width: 100%;
+        }
+        #search-container > input[type = 'text']:focus{
+            outline: none;
+        }
+        /* Dont forget to activate it when you are donw */
+        #search-container > div{
+            width: 100%;
+            height: 173px;
+            background: white;
+            position: absolute;
+            top: 49px;
+            border-radius: 10px;
+            border: thin solid rgba(0,0,0,.125);
+            box-shadow: 0px 1px 5px rgba(0,0,0,.1);
+            overflow: hidden;
+        }
+        #search-container > div > a{
+            display: block;
+            padding: 5px 10px;
+            color: #535353
+        }
+        #search-container > div > a:hover{
+            text-decoration: none;
+            background: rgba(0,0,0,.2)
+        }
+        
+        /* Media query from 0px - 500px */
+        @media only screen and (max-width:500px){
+            /* Nav Bar */
+            nav{
+                padding: 5px 0px;
+            }
+            nav .container-md > a{
+                font-size: 20px;
+                line-height:35px;
+            }
+            
+            /* Options */
+            #options a{
+                font-size: 12px;
+                text-align: center;
+            }
+            #options div > a > img{
+                width: 20px;
+            }
+            /* Cart */
+            #options #cart > a > span{
+                line-height: 13px;
+                font-size: 11px;
+                padding: 1px;
+                border-radius: 5px;
+                bottom: 35px;
+                right: 3px;
+            }
+            
+            /* Search Bar */
+            #search-container > input[type = 'text']{
+                background-size: 15px;
+                background-position: 5px center;
+                padding: 3px 10px 3px 25px;
+                font-size: 1rem;
+            }
+            #search-container > div > a{
+                font-size: .8rem;
+            }
+        }
+        /* Media query from 0px - 350px */
+        @media only screen and (max-width:400px){
+            nav .container-md > a{
+                font-size: 15px;
+            }
+        }
+    </style>
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+    <!-- Nav Bar -->
+    <nav>
+        <div class="container-md">
+            <a href="{% url 'app:home' %}">Ogocando Commodities</a>
+            <div id="options">
+                {% if user.is_authenticated %}
+                   <!-- User -->
+                    <div>
+                      <a href="">
+                          <img width="28px" src="{% static 'app/images/user-hover.png' %}" alt=""><br/>
+                           Hi {{ user.username }}
+                      </a>
+                   </div>
+                {% endif%}
+                <!-- Cart -->
+               <div id="cart">
+                  <a href="">
+                      <img width="28px" src="{% static 'app/images/cart-hover.png' %}" alt=""><br/>
+                       <span>99</span>
+                       Cart
+                  </a>
+               </div>
+               {% if user.is_authenticated %}
+                  <!-- Log out -->
+                   <div>
+                      <a href="{% url 'user:logout' %}">
+                          <img width="28px" src="{% static 'app/images/logout.png' %}" alt=""><br/>
+                           Log Out
+                      </a>
+                   </div>
+               {% else %}
+                  <!-- Sign In -->
+                   <div>
+                      <a href="{% url 'user:signin' %}">
+                          <img width="28px" src="{% static 'app/images/signin.png' %}" alt=""><br/>
+                           Sign In
+                      </a>
+                   </div>
+                   <!-- Sign Up -->
+                   <div>
+                      <a href="{% url 'user:signup' %}">
+                          <img width="28px" src="{% static 'app/images/signup.png' %}" alt=""><br/>
+                           Sign Up
+                      </a>
+                   </div>
+               {% endif %}
+            </div>
+            <!-- Seach Bar -->
+            <div id="search-container">
+                <input type="text" name="search" placeholder="Try Cocoyam..">
+<!--
+                <div>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                    <a href="">Power</a>
+                </div>
+-->
+            </div>
+        </div>
+    </nav>
+    {% block content %}
+    {% endblock %}
+    <script src = "{% static 'app\jquery-3.5.1.min.js' %}"></script>
+    <script src="{% static 'app\bootstrap.bundle.min.js' %}"></script>
+    {% block javascript %}
+    {% endblock %}
+</body>
+</html>

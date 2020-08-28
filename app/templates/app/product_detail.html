@@ -1,0 +1,194 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+
+{% block head %}
+    <title>{{ good.name }}</title>
+    <style>
+        /* Main Good */
+        #qty-container p{
+            display: inline-block;
+        }
+        #qty-container p:nth-child(2){
+            border: thin solid rgba(0,0,0,.125);
+            padding: 5px;
+            user-select: none;
+        }
+        #qty-container p:nth-child(2) span{
+            padding: 0px 15px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        #qty-container p:nth-child(2) span:hover{
+            color: #159fdc
+        }
+        .row:first-child .col-md-6:nth-child(2) > p:last-child{
+            background: #159fdc;
+            padding: 5px 0px;
+            color: white;
+            border: thin solid #159fdc;
+            text-align: center;
+            transition: all .3s ease-in-out;
+            cursor: pointer;
+        }
+        .row:first-child .col-md-6:nth-child(2) > p:last-child:hover{
+            color: #159fdc;
+            background: white;
+        }
+        #other-images-container{
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(3,1fr)
+        }
+        #other-images-container > img:first-child{
+            opacity: 1;
+            border: thin solid #159fdc;
+        }
+        #other-images-container > img{
+            cursor: pointer;
+            width: 100%;
+            opacity: .7;
+            transition: all .1s ease-in-out;
+        }
+        #other-images-container > img:hover{
+            opacity: 1;
+        }
+        /* Other Goods */
+        .labels::after{
+            content: '';
+            display: block;
+            width: 50px;
+            margin: 5px auto 20px auto;
+            height: 2px;
+            background: #159fdc;
+        }
+        #other-goods-container{
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            grid-gap: 15px;
+        }
+        #other-goods-container .good{
+            max-width: 266.25;
+            overflow: hidden;
+        }
+        #other-goods-container .good:hover > p{
+            top: 0px;
+        }
+        #other-goods-container .good > a{
+            text-decoration: none;
+        }
+        #other-goods-container .good > p{
+            text-align: center;
+            margin: 10px 5px;
+            background: #159fdc;
+            color: white;
+            border: thin solid #159fdc;
+            border-radius: 2px;
+            transition: all .3s ease-in-out;
+            padding: 5px 0px;
+            position: relative;
+            top: 100px;
+            font-size: 15px;
+
+        }
+        #other-goods-container .good > p:hover{
+            color: #159fdc;
+            background: white;
+            cursor: pointer;
+        }
+        
+        @media only screen and (max-width:800px){
+            #other-goods-container{
+                grid-template-columns: repeat(3,1fr);
+            }
+            #other-goods-container .good > p{
+                font-size: 12px;
+            }
+        }
+        @media only screen and (max-width:533px){
+            #other-goods-container{
+                grid-template-columns: repeat(2,1fr);
+            }
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container-md" style="margin-top: 120px;">
+       <!-- Main Good -->
+        <div id = 'main-good-container' class="row">
+            <div class="col-md-6">
+                <img id="main-image" width="100%" src="{{ good.image1.url }}" alt="">
+                <div id="other-images-container">
+                    {% for img in good.active_images %}
+                        <img src="{{ img.url }}" alt="">
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h1 class="text-center text-md-left" style="font-size: 1.6rem;color: #333333;font-weight: 400">{{ good.name }}</h1>
+                <h1 class="text-center text-md-left" style="font-size: 1.6rem;color: #159fdc;font-weight: 400">GHC {{ good.price }}</h1>
+                <p class="text-muted text-center text-md-left ">{{ good.description }}</p>
+                <div class="text-center text-md-left" id="qty-container">
+                    <p class="text-muted mr-3">Qty:</p>
+                    <p class="text-muted">
+                        <span id="decrease">-</span>
+                        <span id = 'qty'>1</span>
+                        <span id="increase">+</span>
+                    </p>
+                </div>
+                <p id = '{{ good.id }}'>ADD TO CART</p>
+            </div>
+        </div>
+        <h5 class="text-center mt-4 labels">You May Also Like</h5>
+        <!-- Other Good -->
+        <div id="other-goods-container">
+            {% for good in goods %}
+                <div class = 'good'>
+                    <a href="{% url 'app:detail' good.pk %}">
+                        <img width = '100%' src="{{ good.image1.url }}" alt="">
+                        <p class="text-center m-auto mt-2" style = 'color: #333333'>{{good.name}}</p>
+                        <p class="text-center" style = 'color: #535353'>GHC {{good.price}}</p>
+                    </a>
+                    <p id="{{good.id}}">ADD TO CART</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        // A function that increases or decreases the quantity of an item
+        let modifyQuantity = () => {
+            // Increase Quantity
+            $('#increase').click(function(){
+                let qty = $('#qty');
+                if(Number(qty.text()) + 1 < 100){
+                    qty.text(`${Number(qty.text()) + 1}`)
+                }
+            });
+            
+            // Decrease Quantity
+            $('#decrease').click(function(){
+                let qty = $('#qty');
+                if(Number(qty.text()) - 1 > 0){
+                    qty.text(`${Number(qty.text()) - 1}`)
+                }
+            });
+        }
+        
+        modifyQuantity()
+        
+        // A function that changes the image of the main product
+        let changeImage = () => {
+            let currentImageIndex = 0;
+            $('#other-images-container img').click(function(){
+                $('#other-images-container img').eq(currentImageIndex).css({'opacity':'.7','border':'none'});
+                $(this).css({'opacity':'1','border':'thin solid #159fdc'});
+                $('#main-image').attr('src',$(this).attr('src'));
+                currentImageIndex = $('#other-images-container img').index($(this));
+            });
+        }
+        
+        changeImage()
+    </script>
+{% endblock %}

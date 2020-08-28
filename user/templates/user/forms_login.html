@@ -1,0 +1,26 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+
+{% block head %}
+    <title>Sign In</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'user/styles.css' %}"/>
+{% endblock %}
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <h1>OGOCANDO Commodities</h1>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {{ form.as_p }}
+        <a href="{% url 'user:password_reset' %}" id="forgot">Forgot Password</a>
+        <br/>
+        <input type="submit" value = 'Sign In' /><br/>
+        <span id="new-member">Not a member? <a href="{% url 'user:signup' %}"> Sign Up</a></span>
+    </form>
+    <script>
+    </script>
+{% endblock %}

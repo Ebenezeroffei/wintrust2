@@ -1,0 +1,21 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block head %}
+    {% endblock head %}
+</head>
+
+<body>
+   <div id="container">
+        {% block content %}
+        {% endblock %}
+   </div>
+   <script src="{% static 'user/jquery-3.4.1.min.js' %}"></script>
+   {% block javascript %}
+   {% endblock %}
+</body>
+</html>

@@ -1,0 +1,20 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+
+{% block head %}
+    <title>Sign Up</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'user/styles.css' %}"/>
+{% endblock %}
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <h1>OGOCANDO Commodities</h1>
+        {{ form.as_p }}
+        <input type="submit" value = 'Sign Up'/><br/>
+        <span id="new-member">Already a member? <a href="{% url 'user:signin' %}"> Sign In</a></span>
+    </form>
+    <script>
+        
+    </script>
+{% endblock %}

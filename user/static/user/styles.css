@@ -1,0 +1,203 @@
+body{
+    margin:0;
+    user-select:none;
+    background-image: linear-gradient(45deg,#00a8f3,royalblue,skyblue);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+*:focus{
+    outline: none;
+}
+form{
+    width:450px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    height: calc(100vh - 100px);
+    border-radius: 5px;
+    background-position: -200px;
+    overflow: hidden;
+}
+form h1{
+    text-align: center;
+    background-clip:padding-box;
+    border-bottom: thin solid #535353;
+    font: 30px sans-serif;
+    color: #00a8f3;
+}
+fieldset{
+    border:thin solid #535353;
+    border-radius:5px;
+}
+legend{
+    font:20px sans-serif;
+}
+label{
+    font: 20px sans-serif;
+    width: 400px;
+    margin: auto;
+    color: #535353;
+    display: block;
+    text-align: left;
+    padding-left: 5px;
+    font-weight: bold;
+}
+input[type = 'text'],input[type = 'password'],input[type = 'email']{
+    width: 400px;
+    border: thin solid #535353;
+    border-radius: 5px;
+    padding: 5px;
+    font: 18px sans-serif;
+}
+input[type = 'submit']{
+    border:thin solid white;
+    color:white;
+    display: block;
+    background-image: linear-gradient(45deg,#00a8f3,royalblue,skyblue);
+    border-radius:3px;
+    font:20px sans-serif;
+    width:410px;
+    cursor:pointer;
+    margin: 20px auto;
+    padding: 10px 0px;
+}
+#forgot{
+    text-decoration: none;
+    font: 12px sans-serif;
+    margin-left: calc(425px - 90.68px);
+}
+#forgot:hover{
+    text-decoration: underline;
+}
+
+p{
+    margin:15px auto;
+    color:#535353;
+    font:16px sans-serif;
+    text-align:center;
+}
+fieldset{
+    border: none;
+    border-top: thin solid #535353;
+    text-align: center;
+    border-radius: 0px;
+    width: 400px;
+    margin: 0px auto 10px auto;
+}
+legend{
+    color: #535353;
+    text-align: center;
+}
+#new-member,#old-member{
+    display: block;
+    font: 16px sans-serif;
+    width: 450px;
+    text-align: center;
+    margin: auto;
+    font-weight: bold;
+    color: #535353;
+}
+#new-member a,#old-member a{
+    text-decoration: none;
+}
+#new-member a:hover,#old-member a:hover{
+    text-decoration: underline;
+}
+p a{
+    font-weight:bold;
+    color:blue;
+}
+.errorlist,.helptext{
+    width: 400px;
+    font: 12px sans-serif;
+    text-align: left;
+    display: block;
+    color: red;
+    margin: auto;
+    padding: 0px;
+}
+.message{
+    font: 16px sans-serif;
+    color: lime;
+    border-radius: 5px;
+    text-align: center;
+    padding: 4px;
+/*    background: rgba(0,255,0,.2);*/
+    border: 2px solid rgba(0,255,0,.4);
+}
+ul{
+    display: none;
+}
+.errorlistt{
+    list-style: none;
+}
+.helptext{
+    color: green;
+    margin-top: 5px;
+}
+
+
+/* Media queries */
+@media only screen and (max-width:450px){
+    form{
+        width: 100%;
+        padding: 20px 0px 20px 0px;
+    }
+    form h1{
+        font-size: 25px;
+    }
+    input[type = 'text'],input[type = 'password'],input[type = 'email']{
+        width: calc(100vw - 20px);
+        font-size: 16px;
+    }
+    label{
+        font-size: 18px;
+        width: calc(100vw - 10px);
+    }
+    input[type = 'submit']{
+        width: calc((100vw - 20px) + 10px);
+        color: white;
+    }
+    #forgot{
+        float: right;
+        width: 130px;
+        text-align: center;
+    }
+    
+    fieldset{
+        width: calc(100vw - 20px);
+    }
+    legend{
+        font-size: 18px;
+    }
+    #new-member,#old-member{
+        width: 100%;
+        font-size: 14px;
+    }
+    #fb-google{
+        width: 100%;
+        text-align: center;
+    }
+    .others{
+        display: block;
+        font-size: 16px;
+        float: none;
+        width: calc(100vw - 20px);
+        margin: auto;
+    }
+    .others img{
+        height: 14px;
+    }
+    .google{
+        margin-top: 10px;
+    }
+    .message{
+        font-size: 14px;
+    }
+    .errorlist,.helptext{
+        font-size: 10px;
+        width: calc(100vw - 20px);
+    }
+}
