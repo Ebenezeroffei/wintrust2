@@ -160,7 +160,7 @@
                 {% if user.is_authenticated %}
                    <!-- User -->
                     <div>
-                      <a href="">
+                      <a href="{% url 'user:profile' %}">
                           <img width="28px" src="{% static 'app/images/user-hover.png' %}" alt=""><br/>
                            Hi {{ user.username }}
                       </a>
@@ -168,9 +168,9 @@
                 {% endif%}
                 <!-- Cart -->
                <div id="cart">
-                  <a href="">
+                  <a href="{% url 'app:cart' %}">
                       <img width="28px" src="{% static 'app/images/cart-hover.png' %}" alt=""><br/>
-                       <span>99</span>
+                       <span>{{ cart_items_count }}</span>
                        Cart
                   </a>
                </div>

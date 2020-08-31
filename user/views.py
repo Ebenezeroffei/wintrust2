@@ -9,7 +9,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
 from django.views import View,generic
-from .forms import NewUser
+from app.models import Cart
+from .forms import NewUser,EditUserProfileForm
+from app.views import important_info
 
 # Create your views here.
 
@@ -32,6 +34,44 @@ class SignUpUser(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             form.save()
+            user = get_object_or_404(User, username = form.cleaned_data.get('username'))
+            # Create the cart for the user
+            cart = Cart(user = user)
+            cart.save()
             messages.success(request,f'You account has been succesfully created, you can sign in now.')
             return HttpResponseRedirect(reverse('user:signin'))
         return render(request,self.template_name,{'form':form})
+    
+class UserProfileView(generic.View):
+    """ This class shows the profile of the user """
+    form_class = EditUserProfileForm
+    template_name= 'user/profile.html'
+    
+    @method_decorator(login_required(login_url = '/signin/' ))
+    def get(self,request,*args,**kwargs):
+        form = self.form_class(instance = request.user)
+        context = {
+            'form': form
+        }
+        important_info(self,context)
+        return render(request,self.template_name,context)
+    
+    
+    
+    @method_decorator(login_required(login_url = '/sigin/' ))
+    def post(self,request,*args,**kwargs):
+        form = self.form_class(request.POST,instance = request.user)
+        if form.is_valid and form.changed_data:
+            print('I have been changed')
+            print(form.changed_data)
+            form.save()
+            return HttpResponseRedirect(reverse('user:profile'))
+        else:
+            print('I have not been changed')
+        
+        context = {
+            'form': form
+        }
+        important_info(self,context)
+        return render(request,self.template_name,context)
+    

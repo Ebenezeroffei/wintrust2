@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from PIL import Image
 
 # Create your models here.
@@ -11,6 +12,7 @@ class Product(models.Model):
     image3 = models.ImageField(blank = True,null = True,upload_to = 'product_images/')
     
     def save(self):
+        """ This function changes the resolution of the image before saving it """
         super().save()
         images = [self.image1,self.image2,self.image3]
         for img in images:
@@ -20,8 +22,33 @@ class Product(models.Model):
                 new_img.save(img.path)
     
     def active_images(self):
+        """ This function returns all the active images in the product """
         return [img for img in [self.image1,self.image2,self.image3] if img]
         
                 
     def __str__(self):
         return f"{self.name}"
+
+
+class Cart(models.Model):
+    """ This stores the table for the users cart """
+    user = models.OneToOneField(User,on_delete = models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.user.username}'s Cart"
+
+class CartItems(models.Model):
+    """ This is responsible for recording the items in the users cart """
+    cart = models.ForeignKey(Cart,on_delete = models.CASCADE)
+    product = models.ForeignKey(Product,on_delete = models.CASCADE)
+    quantity = models.SmallIntegerField(default = 1)
+    
+    def __str__(self):
+        return f"{self.product.name} in {self.cart.user.username}'s Cart"
+
+class NewsLetters(models.Model):
+    """ This model stores all the emails that will be used to send newsletters """
+    email = models.EmailField()
+    
+    
+    

@@ -5,6 +5,9 @@
 {% block head %}
     <title>OGOCANDO Commodities</title>
     <style>
+        body{
+/*            overflow: hidden;*/
+        }
         /* Slider */
         .caption-container{
             max-width: 150px;
@@ -67,6 +70,44 @@
             color: #159fdc;
             background: white;
             cursor: pointer;
+        }
+        /* News Letter */
+        #news-letter-container{
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,.5);
+            top: 0px;
+            z-index: 20;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        #news-letter{
+            position: relative;
+            transition: all 1s ease-in-out;
+            top: 200px;
+            border-radius: 40px 0px;
+            overflow: hidden;
+        }
+        #news-letter > div:first-child{
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255,255,255,.7);
+            z-index: 2;
+            font-size: 20px;
+            color: #333333;
+            height: 30px;
+            width: 30px;
+            line-height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            margin: 0px;
+            cursor: pointer;
+        }
+        #news-letter > div:first-child:hover{
+            background: rgba(255,255,255,1)
         }
         
         @media only screen and (max-width:800px){
@@ -144,45 +185,34 @@
                         <p class="text-center m-auto mt-2" style = 'color: #333333'>{{good.name}}</p>
                         <p class="text-center" style = 'color: #535353'>GHC {{good.price}}</p>
                     </a>
-                    <p id="{{good.id}}">ADD TO CART</p>
-                </div>
-            {% endfor %}
-            {% for good in goods %}
-                <div class = 'good'>
-                    <a href="">
-                        <img width = '100%' src="{{ good.image1.url }}" alt="">
-                        <p class="text-center m-auto mt-2" style = 'color: #333333'>{{good.name}}</p>
-                        <p class="text-center" style = 'color: #535353'>GHC {{good.price}}</p>
-                    </a>
-                    <p id="{{good.id}}">ADD TO CART</p>
-                </div>
-            {% endfor %}
-            {% for good in goods %}
-                <div class = 'good'>
-                    <a href="">
-                        <img width = '100%' src="{{ good.image1.url }}" alt="">
-                        <p class="text-center m-auto mt-2" style = 'color: #333333'>{{good.name}}</p>
-                        <p class="text-center" style = 'color: #535353'>GHC {{good.price}}</p>
-                    </a>
-                    <p id="{{good.id}}">ADD TO CART</p>
-                </div>
-            {% endfor %}
-            {% for good in goods %}
-                <div class = 'good'>
-                    <a href="">
-                        <img width = '100%' src="{{ good.image1.url }}" alt="">
-                        <p class="text-center m-auto mt-2" style = 'color: #333333'>{{good.name}}</p>
-                        <p class="text-center" style = 'color: #535353'>GHC {{good.price}}</p>
-                    </a>
-                    <p id="{{good.id}}">ADD TO CART</p>
+                    {% if not good.name in cart_items %}
+                        <p id="{{good.id}}">ADD TO CART</p>
+                    {% else %}
+                        <p>ADDED</p>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
     </div>
+    <div id="news-letter-container">
+        <div id="news-letter" class="m-4 m-sm-auto" style="max-width: 800px;">
+            <div>x</div>
+            <div class="row no-gutters">
+                <div class="col-sm-6">
+                    <img height="250px" width = "100%" src="{% static 'app/images/news-letter.jpg' %}" alt="">
+                </div>
+                <div class="col-sm-6 p-3" style="background: #333333">
+                    <h4 style="color: #159fdc;font-family: helvetica;text-align: center;">Subscribe to our news letter</h4>
+                    <input type="email" class="form-control mt-3" placeholder="Your Email">
+                    <button class="btn btn-block mt-4" style="color: white;background: #159fdc;border-radius;border-radius: 30px 0px;: 2px;">Subscribe</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block javascript %}
+    <script src="{% static 'app/index.js' %}"></script>
     <script>
-        let d = document.getElementsByClassName('good')[0];
-        console.log(d.getBoundingClientRect())
-    </script>
+        addToCart("{% url 'app:add_cart' %}")
+    </script>  
 {% endblock %}

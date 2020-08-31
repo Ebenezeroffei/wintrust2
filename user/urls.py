@@ -6,6 +6,7 @@ app_name = 'user'
 urlpatterns = [
     path('signin/',user_views.LoginUserView.as_view(),name = 'signin'),
     path('signup/',user_views.SignUpUser.as_view(),name = 'signup'),
+    path('user/profile/',user_views.UserProfileView.as_view(),name = 'profile'),
     path('logout/',authviews.LogoutView.as_view(),name = 'logout'),
     path(
         'password-reset/',

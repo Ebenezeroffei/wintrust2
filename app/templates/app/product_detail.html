@@ -136,11 +136,15 @@
                         <span id="increase">+</span>
                     </p>
                 </div>
-                <p id = '{{ good.id }}'>ADD TO CART</p>
+                {% if not good.name in cart_items %}
+                    <p id="{{good.id}}">ADD TO CART</p>
+                {% else %}
+                    <p>ADDED</p>
+                {% endif %}
             </div>
         </div>
         <h5 class="text-center mt-4 labels">You May Also Like</h5>
-        <!-- Other Good -->
+        <!-- Other Goods -->
         <div id="other-goods-container">
             {% for good in goods %}
                 <div class = 'good'>
@@ -149,13 +153,18 @@
                         <p class="text-center m-auto mt-2" style = 'color: #333333'>{{good.name}}</p>
                         <p class="text-center" style = 'color: #535353'>GHC {{good.price}}</p>
                     </a>
-                    <p id="{{good.id}}">ADD TO CART</p>
+                    {% if not good.name in cart_items %}
+                        <p id="{{good.id}}">ADD TO CART</p>
+                    {% else %}
+                        <p>ADDED</p>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
     </div>
 {% endblock %}
 {% block javascript %}
+   <script src="{% static 'app/index.js' %}"></script>
     <script>
         // A function that increases or decreases the quantity of an item
         let modifyQuantity = () => {
@@ -190,5 +199,7 @@
         }
         
         changeImage()
+        
+        addToCart("{% url 'app:add_cart' %}")
     </script>
 {% endblock %}
