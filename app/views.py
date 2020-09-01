@@ -75,14 +75,59 @@ class AddItemToCartView(generic.View):
             return response
 
 class CartView(generic.ListView):
-    model = Product
+#    model = Product
     template_name = 'app/cart.html'
+    context_object_name = 'cart'
     
     def get_queryset(self,*args,**kwargs):
-        return self.request.user.cart.cartitems_set.all()
+        if self.request.user.is_authenticated:
+            return self.request.user.cart.cartitems_set.all()
     
     def get_context_data(self,*args,**kwargs):
         context = super().get_context_data(*args,**kwargs)
         important_info(self,context)
+        # Remove some unwanted fields
+        context.pop('object_list')
+        context.pop('cart_items')
         print(context)
         return context
+
+    
+class IncreaseCartItemQuantityView(generic.View):
+    """ This class decreases the quantity of an item in the user's cart"""
+    
+    def get(self,request,*args,**kwargs):
+        cart_item_id = int(request.GET.get('cartItemId'));
+        if request.user.is_authenticated:
+            cart_item = get_object_or_404(request.user.cart.cartitems_set.all(),id = cart_item_id)
+            cart_item.quantity += 1
+            cart_item.save()
+            
+        return JsonResponse({})
+    
+
+class DecreaseCartItemQuantityView(generic.View):
+    """ This class decreases the quantity of an item in the user's cart"""
+    
+    def get(self,request,*args,**kwargs):
+        cart_item_id = int(request.GET.get('cartItemId'))
+        if request.user.is_authenticated:
+            cart_item = get_object_or_404(request.user.cart.cartitems_set.all(),id = cart_item_id)
+            cart_item.quantity -= 1
+            cart_item.save()
+            
+            return JsonResponse({})
+            
+
+class DeleteCartItemView(generic.View):
+    """ This class removes an item from the user's cart """
+    
+    def get(self,request,*args,**kwargs):
+        cart_item_id= int(request.GET.get('cartItemId'))
+        if request.user.is_authenticated:
+            cart_item = get_object_or_404(request.user.cart.cartitems_set.all(),id = cart_item_id)
+            cart_item.delete()
+        data = {
+            'cart_items_count' : request.user.cart.cartitems_set.count()
+        }
+        return JsonResponse(data)
