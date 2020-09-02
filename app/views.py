@@ -43,7 +43,7 @@ class AddItemToCartView(generic.View):
         if request.user.is_authenticated:
             print("I have signed in")
             cart = request.user.cart
-            cart_item = CartItems(cart = cart,product = product)
+            cart_item = CartItems(cart = cart,product = product,quantity = quantity)
             cart_item.save() # Save the itme to the user's cart
             data = {
                 'cart_items': cart.cartitems_set.count()
@@ -54,13 +54,16 @@ class AddItemToCartView(generic.View):
             print("I have not signed in")
             data = {}
 #            response = JsonResponse(data)
-            if request.COOKIES.get('cart_count'):
+            cart_count_lst = [int(key[10:]) for key in request.COOKIES.keys() if key.startswith('product_id')]
+#            print(cart_count_lst)
+            if cart_count_lst:
                 print("I am in the cookie")
-                data['cart_items'] = cart_count = int(request.COOKIES.get('cart_count')) + 1
+                data['cart_items'] = cart_count = len(cart_count_lst) + 1
+                max_cart_count = max(cart_count_lst)
                 response = JsonResponse(data)
-                response.set_cookie(f"product_id{cart_count}",product.id)
-                response.set_cookie(f"product_name{cart_count}",product.name)
-                response.set_cookie(f"quantity{cart_count}",quantity)
+                response.set_cookie(f"product_id{max_cart_count + 1}",product.id)
+                response.set_cookie(f"product_name{max_cart_count + 1}",product.name)
+                response.set_cookie(f"quantity{max_cart_count + 1}",quantity)
                 response.set_cookie(f"cart_count",cart_count)
             else:
                 print("I am not in the cookie")
@@ -75,13 +78,29 @@ class AddItemToCartView(generic.View):
             return response
 
 class CartView(generic.ListView):
-#    model = Product
     template_name = 'app/cart.html'
     context_object_name = 'cart'
     
     def get_queryset(self,*args,**kwargs):
         if self.request.user.is_authenticated:
             return self.request.user.cart.cartitems_set.all()
+        else:
+            cart = []
+            try:
+#                cart_count = int(self.request.COOKIES.get('cart_count'))
+                cart_count_lst = [int(key[10:]) for key in self.request.COOKIES.keys() if key.startswith('product_id')]
+                print(cart_count_lst)
+                for num in cart_count_lst:
+                    cart_item = (
+                        get_object_or_404(Product, id = int(self.request.COOKIES.get(f'product_id{num}'))),
+                        self.request.COOKIES.get(f'quantity{num}'),
+                        num
+                    )
+    #                print(cart_item)
+                    cart.append(cart_item)
+            except TypeError:
+                pass
+            return cart
     
     def get_context_data(self,*args,**kwargs):
         context = super().get_context_data(*args,**kwargs)
@@ -98,12 +117,20 @@ class IncreaseCartItemQuantityView(generic.View):
     
     def get(self,request,*args,**kwargs):
         cart_item_id = int(request.GET.get('cartItemId'));
+        # User is signed in
         if request.user.is_authenticated:
             cart_item = get_object_or_404(request.user.cart.cartitems_set.all(),id = cart_item_id)
             cart_item.quantity += 1
             cart_item.save()
+            return JsonResponse({})
+        # User has not signed in
+        else:
+            response = JsonResponse({})
+            # Increase the quantity in the cookie
+            new_qty = int(request.COOKIES.get(f'quantity{cart_item_id}')) + 1
+            response.set_cookie(f'quantity{cart_item_id}',new_qty)
+            return response
             
-        return JsonResponse({})
     
 
 class DecreaseCartItemQuantityView(generic.View):
@@ -111,12 +138,19 @@ class DecreaseCartItemQuantityView(generic.View):
     
     def get(self,request,*args,**kwargs):
         cart_item_id = int(request.GET.get('cartItemId'))
+        # User has signed in
         if request.user.is_authenticated:
             cart_item = get_object_or_404(request.user.cart.cartitems_set.all(),id = cart_item_id)
             cart_item.quantity -= 1
             cart_item.save()
-            
             return JsonResponse({})
+        # Anonymous User
+        else:
+            response = JsonResponse({})
+            # Decrease the quantity in the cookie
+            new_qty = int(request.COOKIES.get(f'quantity{cart_item_id}')) - 1
+            response.set_cookie(f'quantity{cart_item_id}',new_qty)
+            return response
             
 
 class DeleteCartItemView(generic.View):
@@ -124,10 +158,26 @@ class DeleteCartItemView(generic.View):
     
     def get(self,request,*args,**kwargs):
         cart_item_id= int(request.GET.get('cartItemId'))
+        # Registered User
         if request.user.is_authenticated:
             cart_item = get_object_or_404(request.user.cart.cartitems_set.all(),id = cart_item_id)
             cart_item.delete()
-        data = {
-            'cart_items_count' : request.user.cart.cartitems_set.count()
-        }
-        return JsonResponse(data)
+            data = {
+                'cart_items_count' : request.user.cart.cartitems_set.count()
+            }
+            return JsonResponse(data)
+        # Unregistered User
+        else:
+            data = {
+                'cart_items_count': int(request.COOKIES.get('cart_count')) - 1
+            }
+            response = JsonResponse(data)
+            # Modify the cart count
+            response.set_cookie('cart_count',data.get('cart_items_count'))
+            print(dir(request.COOKIES))
+            #Remove the item with that id
+            response.delete_cookie(f'product_id{cart_item_id}')
+            response.delete_cookie(f'product_name{cart_item_id}')
+            response.delete_cookie(f'quantity{cart_item_id}')
+            return response
+            

@@ -1,0 +1,498 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block head %}
+    <title>Cart</title>
+    <style>
+        /* Main Menu */
+        #main-menu{
+            width: calc(100% - 170px);
+            margin: auto;
+/*            height: 200px;*/
+/*            background: lime;*/
+            display: inline-block;
+            position: relative;
+            left: 160px;
+        }
+/*
+        #qty-container p{
+            display: inline-block;
+        }
+*/
+        #qty-container > p{
+            padding: 0px;
+            user-select: none;
+            text-align: center;
+        }
+        #qty-container  > p > span{
+            display: block;
+            font-size: 15px;
+        }
+        #qty-container > p > img{
+            cursor: pointer;
+        }
+        #qty-container > p > span:hover{
+            color: #159fdc
+        }
+        .delete{
+            font-size: 20px;
+            text-align: center;
+            color: lightslategray;
+            cursor: pointer;
+        }
+        .delete:hover{
+            color: red;
+        }
+        /* No Item */
+        #no-item > div > a{
+            color: #333333;
+            background: #159fdc;
+            transition: all .2s ease-in-out;
+            border-radius: 2px;
+        }
+        #no-item > div > a:hover{
+            color: #159fdc;
+            background: #333333;
+            box-shadow: 0px 5px 25px rgba(0,0,0,.3)
+        }
+        /* Divider */
+        #divider{
+            display: grid;
+            grid-template-columns: 70px 1fr;
+            grid-gap: 5px;
+            align-items: center;
+        }
+        
+        /* Cart Titles */
+        #cart-titles > div{
+            text-align: center;
+            color: #999;
+            font-weight: 400;
+            font-size: 14px;
+        }
+        
+        /* Cart Total */
+        .sep{
+            display: grid;
+            grid-template-columns: 2fr 1fr
+        }
+        .sep > *:nth-child(2){
+            text-align: right;
+        }
+        .sep:last-child{
+            color: #159fdc;
+        }
+        .sep > div{
+            font-size: 14px;
+        }
+        .sep > span{
+            font-size: 14px;
+        }
+        /* Side Menu */
+        #side-menu{
+            width: 150px;
+            position: fixed;
+            height: 100vh;
+/*            border-right: thin solid rgba(0,0,0,.125);*/
+            left: 0px;
+            top: 120px;
+/*            border: thin solid red;*/
+        }
+        #side-menu a{
+            display: block;
+            text-align: center;
+            padding: 10px 0px;
+            color: lightslategray;
+            font-weight: 500;
+        }
+        #side-menu a:hover{
+            text-decoration: none;
+            color: #159fdc;
+        }
+        #side-menu #active{
+            border-right: medium solid #159fdc;
+            color: #159fdc;
+        }
+        #side-menu > a:last-child{
+            color: red;
+        }
+        #side-menu > a:last-child:hover{
+            color: red;
+        }
+        
+        /* Media Query 0px - 767px */
+        @media only screen and (max-width:767px){
+            #cart-titles{
+                display: none;
+            }
+            
+            /* Price */
+            .cart-item > div:nth-child(2)::before{
+                content: "Price:";
+                display: inline-block;
+                color: lightslategray;
+                font-size: 16px;
+            }
+            /* Quantity */
+/*
+            .cart-item > div:nth-child(3) > p::before{
+                content: "Quantity:";
+                display: inline-block;
+                color: #333333
+            }
+*/
+            
+            /* Subtotal */
+            .cart-item > div:nth-child(4)::before{
+                content: "Subtotal:";
+                display: inline-block;
+                color: lightslategray;
+                font-size: 16px;
+            }
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div id="wrapper" style = 'margin-top: 120px;'>
+        <div id="side-menu">
+            <h5 class="text-center text-dark">Cart</h5>
+            <a href="{% url 'user:profile' %}">User Info</a>
+            <a href="{% url 'app:cart' %}" id="active">Cart &nbsp; <span class="badge badge-dark">{{ cart_items_count }}</span></a>
+            <a href="">Address</a>
+            <a href="{% url 'user:logout' %}">Logout</a>
+        </div>
+        <div id="main-menu">
+            {% if user.is_authenticated %}
+                {% if cart %}
+                   <div class="container-md">
+                       <!-- Titles -->
+                        <div id="cart-titles" class="row">
+                            <div class="col-5">Product</div>
+                            <div class="col-2">Price</div>
+                            <div class="col-2">Quantity</div>
+                            <div class="col-2">Sub Total</div>
+                            <div class="col-1"></div>
+                        </div><hr/>
+                        <!-- Details -->
+                        {% for cart_item in cart %}
+                            <div class="row cart-item p-2">
+                                <div class="col-md-5">
+                                   <div id = 'divider'>
+                                       <img width="70px" src="{{cart_item.product.image1.url}}" alt="">
+                                        <span>{{ cart_item.product.name }}</span>
+                                   </div>
+                                </div>
+                                <div class="col-md-2 mt-2 mt-md-0 price d-flex align-items-center justify-content-center" style="font-size: 16px;">&nbsp;GHC {{ cart_item.product.price }}</div>
+                                <div class="col-md-2 mt-2 mt-md-0" id="qty-container">
+                                    <p class="text-muted m-auto">
+                                        <img width="20px" src="{% static 'app/images/arrowUp.png' %}" class="increase" alt="">
+                                        <span id="{{cart_item.id}}" class = 'qty'>{{ cart_item.quantity }}</span>
+                                        <img class = 'decrease' src="{% static 'app/images/arrowDown.png' %}" width="20px"></img>
+                                    </p>
+                                </div>
+                                <div class="col-md-2 mt-2 mt-md-0 subtotal  d-flex align-items-center justify-content-center" style="font-size: 16px;color: #159fdc;text-align: center;">&nbsp;GHC {{ cart_item.product.price }}</div>
+                                <div class="col-md-1 delete order-1">x</div>
+                            </div><hr/>
+                        {% endfor %}
+                        <!-- Cart Total -->
+                        <div class="card mb-5" id = 'cart-total' style="border: thin dashed #999;">
+                            <div class="card-body">
+                                <p class="text-dark">Cart Total</p>
+                                <hr class = 'border-dark'/>
+                                <div class = 'sep'>
+                                    <p>Sub Total</p>
+                                    <p id="cart-subtotal">GHC 160</p>
+                                </div>
+                                <hr/>
+                                <p>Shipping:</p>
+                                <div class="sep">
+                                    <div>
+                                        <input type="radio" id="free" checked name="shipping" value="GHC 0.00">
+                                        <label for="free">Free Shipping</label>
+                                    </div>
+                                    <span>GHC 0.00</span>
+                                </div>
+                                <div class="sep">
+                                    <div>
+                                        <input type="radio" id="standard" name="shipping" value="GHC 10.00">
+                                        <label for = 'standard'>Standard</label>
+                                    </div>
+                                    <span>GHC 10.00</span>
+                                </div>
+                                <div class="sep">
+                                    <div>
+                                        <input type="radio" id="express" name="shipping" value="GHC 20.00">
+                                        <label for="express">Express</label>
+                                    </div>
+                                    <span>GHC 20.00</span>
+                                </div>
+                                <hr/>
+                                <div class="sep">
+                                    <p>Total</p>
+                                    <p id = 'total'>GHC 160</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+               {% else %}
+                   <div id = 'no-item'>
+                        <h3 class="text-muted text-center mt-5">Sorry! There is nothing in your cart..</h3>
+                        <div style="max-width: 400px;margin: 20px auto">
+                            <a href="{% url 'app:home' %}" class = 'btn btn-block'>Why dont you purchase something..</a>
+                        </div>
+                    </div>
+               {% endif %}
+            {% else %}
+                {% if cart %}
+                    <div class="container-md">
+                       <!-- Titles -->
+                        <div id="cart-titles" class="row">
+                            <div class="col-5">Product</div>
+                            <div class="col-2">Price</div>
+                            <div class="col-2">Quantity</div>
+                            <div class="col-2">Sub Total</div>
+                            <div class="col-1"></div>
+                        </div><hr/>
+                        <!-- Details -->
+                        {% for product,quantity,num in cart %}
+                            <div class="row cart-item p-2">
+                                <div class="col-md-5">
+                                   <div id = 'divider'>
+                                       <img width="70px" src="{{product.image1.url}}" alt="">
+                                        <span>{{ product.name }}</span>
+                                   </div>
+                                </div>
+                                <div class="col-md-2 mt-2 mt-md-0 price d-flex align-items-center justify-content-center" style="font-size: 16px;">&nbsp;GHC {{ product.price }}</div>
+                                <div class="col-md-2 mt-2 mt-md-0" id="qty-container">
+                                    <p class="text-muted m-auto">
+                                        <img width="20px" src="{% static 'app/images/arrowUp.png' %}" class="increase" alt="">
+                                        <span id="{{num}}" class = 'qty'>{{ quantity }}</span>
+                                        <img class = 'decrease' src="{% static 'app/images/arrowDown.png' %}" width="20px"></img>
+                                    </p>
+                                </div>
+                                <div class="col-md-2 mt-2 mt-md-0 subtotal  d-flex align-items-center justify-content-center" style="font-size: 16px;color: #159fdc;">&nbsp;GHC {{ product.price }}</div>
+                                <div class="col-md-1 delete order-1">x</div>
+                            </div><hr/>
+                        {% endfor %}
+                        <!-- Cart Total -->
+                        <div class="card mb-5" id = 'cart-total' style="border: thin dashed #999;">
+                            <div class="card-body">
+                                <p class="text-dark">Cart Total</p>
+                                <hr class = 'border-dark'/>
+                                <div class = 'sep'>
+                                    <p>Sub Total</p>
+                                    <p id="cart-subtotal">GHC 160</p>
+                                </div>
+                                <hr/>
+                                <p>Shipping:</p>
+                                <div class="sep">
+                                    <div>
+                                        <input type="radio" id="free" checked name="shipping" value="GHC 0.00">
+                                        <label for="free">Free Shipping</label>
+                                    </div>
+                                    <span>GHC 0.00</span>
+                                </div>
+                                <div class="sep">
+                                    <div>
+                                        <input type="radio" id="standard" name="shipping" value="GHC 10.00">
+                                        <label for = 'standard'>Standard</label>
+                                    </div>
+                                    <span>GHC 10.00</span>
+                                </div>
+                                <div class="sep">
+                                    <div>
+                                        <input type="radio" id="express" name="shipping" value="GHC 20.00">
+                                        <label for="express">Express</label>
+                                    </div>
+                                    <span>GHC 20.00</span>
+                                </div>
+                                <hr/>
+                                <div class="sep">
+                                    <p>Total</p>
+                                    <p id = 'total'>GHC 160</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div id = 'no-item'>
+                        <h3 class="text-muted text-center mt-5">Sorry! There is nothing in your cart..</h3>
+                        <div style="max-width: 400px;margin: 20px auto">
+                            <a href="{% url 'app:home' %}" class = 'btn btn-block'>Why dont you purchase something..</a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        // A function that calls an ajax request to modify quantity in the database
+        let ajaxRequestModifyQuantity = (url,cartItemId) => {
+            $.ajax({
+                url: url,
+                data: {
+                    cartItemId
+                },
+                dataType: 'json'
+            });
+        }
+        
+        
+        // A function that increases or decreases the quantity of an item
+        let modifyQuantity = () => {
+            // Increase Quantity
+            $('.increase').click(function(){
+                let qty = $('.qty').eq($('.increase').index($(this)));
+                let price = Number($('.price').eq($('.increase').index($(this))).text().substr(5,));
+                let subtotal = $('.subtotal').eq($('.increase').index($(this)));
+//                console.log(qty.attr('id'))
+                if(Number(qty.text()) + 1 < 100){
+                    qty.text(`${Number(qty.text()) + 1}`);
+                    ajaxRequestModifyQuantity("{% url 'app:increase' %}",qty.attr('id'));
+                    // Calculate the subtotal for each cart item
+                    subtotal.html(`&nbsp;GHC ${calculateSubtotal(price,Number(qty.text()))}`);
+                    // Calculate the total for all the subtotals in the cart
+                    $('#cart-subtotal').html(`GHC ${calculateCartSubtotal()}`);
+                    // Calculate the total 
+                    $('#total').html(`GHC ${calculateTotal()}`);
+                }
+            });
+            
+            // Decrease Quantity
+            $('.decrease').click(function(){
+                let qty = $('.qty').eq($('.decrease').index($(this)));
+                let price = Number($('.price').eq($('.decrease').index($(this))).text().substr(5,));
+                let subtotal = $('.subtotal').eq($('.decrease').index($(this)));
+                if(Number(qty.text()) - 1 > 0){
+                    qty.text(`${Number(qty.text()) - 1}`);
+                    ajaxRequestModifyQuantity("{% url 'app:decrease' %}",qty.attr('id'));
+                    // Calculate the subtotal for each cart item
+                    subtotal.html(`&nbsp;GHC ${calculateSubtotal(price,Number(qty.text()))}`);
+                    // Calculate the total for all the subtotals in the cart
+                    $('#cart-subtotal').html(`GHC ${calculateCartSubtotal()}`);
+                    // Calculate the total 
+                    $('#total').html(`GHC ${calculateTotal()}`);
+                }
+            });
+        }
+        modifyQuantity();
+        
+        // A funtion that removes an item from the user's cart
+        let removeItem = () => {
+            $('.delete').click(function(){
+                let parent = $(this).parent();
+                let cartItemId = parent.find('.qty').attr('id');
+                console.log(cartItemId);
+                $.ajax({
+                    url: "{% url 'app:delete' %}",
+                    data: {
+                        cartItemId
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        // Remove the items from the frontend
+                        parent.slideUp(function(){
+                            $(this).remove();
+                            // Calculate the subtotal for all the items in the cart
+                            $('#cart-subtotal').html(`GHC ${calculateCartSubtotal()}`)
+                            // Calculate the total 
+                            $('#total').html(`GHC ${calculateTotal()}`);
+                        });
+                        // Modify the number of items in the cart
+                        $('#cart > a > span').text(`${data['cart_items_count']}`);
+                        $('#side-menu > a').eq(1).find('span').text(`${data['cart_items_count']}`)
+                        // No items in the users cart
+                        if(data['cart_items_count'] < 1){
+                            $('#main-menu > div').slideUp(function(){
+                                $(this).remove();
+                                $('#main-menu').append(
+                                    `<div id = 'no-item'>
+                                        <h3 class="text-muted text-center mt-5">Sorry! There is nothing in your cart..</h3>
+                                        <div style="max-width: 400px;margin: 20px auto">
+                                            <a href="{% url 'app:home' %}" class = 'btn btn-block'>Why dont you purchase something..</a>
+                                        </div>
+                                    </div>`
+                                );
+                            })
+                        }
+                        
+                    }
+                });
+            });
+        }
+        removeItem();
+//        window.onresize = () =>{
+//            console.log(window.innerWidth)
+//        }
+        // A function that calculates the subtotal based on the price and quantity
+        let calculateSubtotal = (price,quantity) => {
+            let subtotal = price * quantity;
+            let subtotalLst = String(subtotal).split('.');
+            if(subtotalLst.length > 1){
+                subtotalLst[1] = subtotalLst[1].slice(0,2).padEnd(2,'0');
+            }
+            else{
+                subtotalLst.push('00');
+            }
+            return subtotalLst.join('.');
+        }
+        
+//         A function that calculates the total
+        let calculateCartSubtotal = () => {
+            let cartSubtotal = 0;
+            $('.subtotal').each(function(){
+                cartSubtotal += Number($(this).text().substring(5,));
+            });
+            cartSubtotal = String(cartSubtotal).split('.');
+            if(cartSubtotal.length > 1){
+                cartSubtotal[1] = cartSubtotal[1].slice(0,2).padEnd(2,'0');
+            }
+            else{
+                cartSubtotal.push('00');
+            }
+            return cartSubtotal.join('.');
+        }
+        
+        // A function that calculates the total of all the items required for a user to receive his products
+        let calculateTotal = () => {
+            let total = 0;
+            total += Number($('#cart-subtotal').text().substr(4,));
+            total += Number($('input[type = "radio"]:checked').val().substr(4,));
+            total = String(total).split('.');
+            if(total.length > 1){
+                total[1] = total[1].slice(0,2).padEnd(2,'0');
+            }
+            else{
+                total.push('00');
+            }
+            return total.join('.');
+        }
+        
+        // A function that modifies the total when a specific shipping option has been chosen
+        let modifyTotal = () => {
+            $('input[type = "radio"]').click(function(){
+                $('#total').html(`GHC ${calculateTotal()}`);
+            });
+        }
+        modifyTotal() 
+        
+        
+        // A function that calculates all the subtotals when the page loads
+        let init = () => {
+            let cartSubtotal = 0
+            // Calculate the subtotal for each item in the cart
+            $('.cart-item').each(function(){
+                let qty = Number($(this).find('.qty').text());
+                let price = Number($(this).find('.price').text().slice(5,));
+                $(this).find('.subtotal').html(`&nbsp;GHC ${calculateSubtotal(price,qty)}`);
+            });
+            // Calculate the subtotal for all the items in the cart
+            $('#cart-subtotal').html(`GHC ${calculateCartSubtotal()}`)
+            // Calculate the total 
+            $('#total').html(`GHC ${calculateTotal()}`);
+        }
+        init();
+    </script>
+{% endblock %}

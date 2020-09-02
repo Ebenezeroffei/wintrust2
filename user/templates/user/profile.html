@@ -1,0 +1,88 @@
+{% extends 'app/base.html' %}
+
+{% block head %}
+    <title>User Profile</title>
+    <style>
+        /* Main Menu */
+        #main-menu{
+            width: calc(100% - 170px);
+            margin: auto;
+/*            height: 200px;*/
+/*            background: lime;*/
+            display: inline-block;
+            position: relative;
+            left: 160px;
+        }
+        #main-menu > form > div:last-child > button{
+            color: #333333;
+            background: #159fdc;
+            transition: all .15s ease-in-out;
+        }
+        #main-menu > form > div:last-child > button:hover{
+            color: #159fdc;
+            background: #333333;
+        }
+        /* Side Menu */
+        #side-menu{
+            width: 150px;
+            position: fixed;
+            height: 100vh;
+/*            border-right: thin solid rgba(0,0,0,.125);*/
+            left: 0px;
+            top: 120px;
+/*            border: thin solid red;*/
+        }
+        #side-menu a{
+            display: block;
+            text-align: center;
+            padding: 10px 0px;
+            color: lightslategray;
+            font-weight: 500;
+        }
+        #side-menu a:hover{
+            text-decoration: none;
+            color: #159fdc;
+        }
+        #side-menu #active{
+            border-right: medium solid #159fdc;
+            color: #159fdc;
+        }
+        #side-menu > a:last-child{
+            color: red;
+        }
+        #side-menu > a:last-child:hover{
+            color: red;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div id="wrapper" style = 'margin-top: 120px;'>
+        <div id="side-menu">
+            <h5 class="text-center text-dark">User Profile</h5>
+            <a href="{% url 'user:profile' %}" id="active">User Info</a>
+            <a href="{% url 'app:cart' %}">Cart &nbsp; <span class="badge badge-dark">{{ cart_items_count }}</span></a>
+            <a href="">Address</a>
+            <a href="{% url 'user:logout' %}">Logout</a>
+        </div>
+        <div id="main-menu">
+            <form action="." method="post" style="max-width: 800px;margin: auto;">
+                {% csrf_token %}
+                <div class="row no-gutters">
+                    {% for field in form %}
+                        <div class="col-sm-6 p-2">
+                            <div class="form-group">
+                                {{ field.label_tag }}
+                                {{ field }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div style = 'max-width: 400px;margin: 20px auto;'>
+                    <button type="submit" class="btn btn-block"> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+{% endblock %}
