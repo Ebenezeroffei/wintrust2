@@ -88,6 +88,16 @@
         .sep > span{
             font-size: 14px;
         }
+        .card > div:last-child > a{
+            color: #333333;
+            background: #159fdc;
+            transition: all .2s ease-in-out;
+            border-radius: 2px;
+        }
+        .card > div:last-child > a:hover{
+            color: #159fdc;
+            background: #333333;
+        }
         /* Side Menu */
         #side-menu{
             width: 150px;
@@ -232,6 +242,9 @@
                                     <p id = 'total'>GHC 160</p>
                                 </div>
                             </div>
+                            <div style="width: 300px;margin: auto; ">
+                                <a href="{% url 'app:checkout' %}" class="btn btn-block mb-3">Proceed to checkout</a>
+                            </div>
                         </div>
                     </div>
                {% else %}
@@ -311,6 +324,9 @@
                                     <p>Total</p>
                                     <p id = 'total'>GHC 160</p>
                                 </div>
+                            </div>
+                            <div style="width: 300px;margin: auto;">
+                                <a href="{% url 'app:checkout' %}" class="btn btn-block mb-4">Proceed to checkout</a>
                             </div>
                         </div>
                     </div>

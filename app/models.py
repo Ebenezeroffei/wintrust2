@@ -50,5 +50,18 @@ class NewsLetters(models.Model):
     """ This model stores all the emails that will be used to send newsletters """
     email = models.EmailField()
     
+class BillingAddress(models.Model):
+    user = models.OneToOneField(User,on_delete = models.CASCADE)
+    first_name = models.CharField(max_length = 100)
+    last_name = models.CharField(max_length = 100)
+    company_name = models.CharField('Company Name (Optional)',max_length = 100,null = True,blank = True)
+    state_or_country = models.CharField("State/Country",max_length = 100)
+    town_or_city = models.CharField("Town/City",max_length = 100)
+    phone = models.CharField(max_length = 50)
+    email = models.EmailField()
+    post_or_zipcode = models.CharField("Postcode/ZIP",max_length = 50)
+    
+    def _str_(self):
+        return f"{self.user.username}'s Billing Address"
     
     

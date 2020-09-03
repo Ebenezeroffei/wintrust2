@@ -1,8 +1,8 @@
 from django.shortcuts import render,get_object_or_404
 from django.http import JsonResponse
 from django.views import generic
-from .models import Product,CartItems
-
+from .models import Product,CartItems,BillingAddress
+from .forms import BillingAddressForm
 
 
 def important_info(inst,context):
@@ -181,3 +181,41 @@ class DeleteCartItemView(generic.View):
             response.delete_cookie(f'quantity{cart_item_id}')
             return response
             
+class CheckoutView(generic.View):
+    """ This class displays the billing address form """
+    form_class = BillingAddressForm
+    template_name = 'app/checkout.html'
+    
+    def get(self,request,*args,**kwargs):
+        try:
+            billing = request.user.billingaddress
+            form = self.form_class(instance = billing)
+        except BillingAddress.DoesNotExist:
+            initial = {
+                'first_name':request.user.first_name,
+                'last_name': request.user.last_name,
+                'email': request.user.email
+            }
+            form = self.form_class(initial = initial)
+        context = {
+            'form':form
+        }
+        important_info(self,context)
+        return render(request,self.template_name,context)
+    
+    def post(self,request,*args,**kwargs):
+        try:
+            billing = request.user.billingaddress
+            form = self.form_class(request.POST,instance = billing)
+        except BillingAddress.DoesNotExist:
+            initial = {
+                'first_name':request.user.first_name,
+                'last_name': request.user.last_name,
+                'email': request.user.email
+            }
+            form = self.form_class(request.POST,initial = initial)
+        context = {
+            'form':form
+        }
+        important_info(self,context)
+        return render(request,self.template_name,context)
