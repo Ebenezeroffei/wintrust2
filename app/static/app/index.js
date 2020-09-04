@@ -1,17 +1,40 @@
-//setTimeout(function(){
-//    $('#news-letter-container').css({'visibility':'visible','opacity':'1'});
-//    $('body').css('overflow','hidden');
-//},2000)
+setTimeout(function(){
+    $('#news-letter-container').css({'visibility':'visible','opacity':'1'});
+    $('body').css('overflow','hidden');
+    console.log("alright");
+},2000);
 
 // A function that will close the news letter container when clicked on
-let closeNewsLetter = () => {
+let closeNewsLetter = (url) => {
+    let emailRegExp = /^[a-z][a-z\d]+@[a-z]+\.[a-z]{2,}(\.[a-z]{2,})?$/
+    // When the close button is clicked
     $('#news-letter div').first().click(function(){
         $('#news-letter-container').css({'visibility':'hidden','opacity':'0'});
         $('body').css('overflow','auto');
     });
+    // When the subscribe button is clicked
+    $('#subscribe').click(function(){
+        let email = $('#email'); // Get the email
+        console.log(email)
+        // Check if it is a valid email
+        if(emailRegExp.test(email.val())){
+            // Make an ajax request
+            $.ajax({
+                url: url,
+                data: {
+                    "email": email.val()
+                },
+                dataType: 'json'
+            });
+        }
+        // Reset the input fields value
+        email.val('');
+        // Remove the news letters
+//        $('#news-letter-container').css({'visibility':'hidden','opacity':'0'});
+//        $('body').css('overflow','auto');
+        
+    });
 }
-
-closeNewsLetter()
 
 
 // A function that adds a good to the users cart

@@ -6,7 +6,7 @@
     <title>OGOCANDO Commodities</title>
     <style>
         body{
-/*            overflow: hidden;*/
+            overflow: hidden;
         }
         /* Slider */
         .caption-container{
@@ -86,7 +86,7 @@
         #news-letter{
             position: relative;
             transition: all 1s ease-in-out;
-            top: 200px;
+            top: 100px;
             border-radius: 40px 0px;
             overflow: hidden;
         }
@@ -126,6 +126,7 @@
     </style>
 {% endblock %}
 {% block content %}
+   <!-- Slider -->
     <div class="container" style="margin-top: 120px;">
         <div id="carouselExampleCaptions" style="border-radius: 5px;box-shadow: 0px 2px 5px rgba(0,0,0,.3);overflow: hidden;" class="carousel slide" data-ride="carousel">
           <ol class="carousel-indicators">
@@ -177,6 +178,7 @@
           </a>
         </div>
         <h5 class="text-center mt-4 labels">Top Selling Items</h5>
+        <!-- Goods -->
         <div id="goods-container">
             {% for good in goods %}
                 <div class = 'good'>
@@ -194,6 +196,7 @@
             {% endfor %}
         </div>
     </div>
+    <!-- News Letters -->
     <div id="news-letter-container">
         <div id="news-letter" class="m-4 m-sm-auto" style="max-width: 800px;">
             <div>x</div>
@@ -203,8 +206,8 @@
                 </div>
                 <div class="col-sm-6 p-3" style="background: #333333">
                     <h4 style="color: #159fdc;font-family: helvetica;text-align: center;">Subscribe to our news letter</h4>
-                    <input type="email" class="form-control mt-3" placeholder="Your Email">
-                    <button class="btn btn-block mt-4" style="color: white;background: #159fdc;border-radius;border-radius: 30px 0px;: 2px;">Subscribe</button>
+                    <input type="email" id="email" class="form-control mt-3" placeholder="Your Email">
+                    <button class="btn btn-block mt-4" id="subscribe" style="color: white;background: #159fdc;border-radius;border-radius: 30px 0px;: 2px;">Subscribe</button>
                 </div>
             </div>
         </div>
@@ -213,6 +216,7 @@
 {% block javascript %}
     <script src="{% static 'app/index.js' %}"></script>
     <script>
-        addToCart("{% url 'app:add_cart' %}")
+        closeNewsLetter("{% url 'app:newsletters' %}");
+        addToCart("{% url 'app:add_cart' %}");
     </script>  
 {% endblock %}

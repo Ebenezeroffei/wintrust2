@@ -1,0 +1,65 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <link rel="stylesheet" href="{% static 'control/bootstrap.min.css' %}">
+    <style>
+        body{
+            margin: auto;
+        }
+        /* Navbar Designs */
+        nav{
+            padding:10px;
+            background: #333333;
+            width: 100%;
+        }
+        nav a{
+            text-decoration: none;
+            font: 20px verdana;
+            color: #159fdc;
+        }
+        nav a:hover{
+            text-decoration: none;
+        }
+        nav ul{
+            margin: 0px;
+            list-style-type: none;
+            padding: 0px;
+            float: right;
+        }
+        nav ul li a{
+            font-size: 16px;
+            padding: 5px 10px 0px 10px;
+        }
+        nav ul li a:hover{
+            color: rgba(255,255,255,.8)
+        }
+    </style>
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+    <div class="container">
+        <nav class="fixed-top">
+            <a href="{% url 'control:admin_home' %}" >OGOCANDO Commodities (Admin)</a>
+            <ul>
+                <li><a href="{% url 'control:logout_admin' %}">
+                   <img width="16px" src="{% static 'control/images/logout.png' %}" alt="">
+                    Logout
+                </a></li>
+            </ul>
+        </nav>
+    </div>
+    {% block content %}
+    {% endblock %}
+    <script src="{% static 'control\jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'control\bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'control\Chart.bundle.min.js' %}"></script>
+    {% block javascript %}
+    {% endblock %}
+</body>
+</html>

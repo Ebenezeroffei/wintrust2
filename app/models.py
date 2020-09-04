@@ -1,15 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 from PIL import Image
 
 # Create your models here.
 class Product(models.Model):
     name = models.CharField(max_length = 100)
     price = models.DecimalField(max_digits = 1000,decimal_places =2)
-    description = models.CharField(max_length = 500)
+    description = models.TextField(max_length = 500)
     image1 = models.ImageField(upload_to = 'product_images/')
-    image2 = models.ImageField(blank = True,null = True,upload_to = 'product_images/')
-    image3 = models.ImageField(blank = True,null = True,upload_to = 'product_images/')
+    image2 = models.ImageField(upload_to = 'product_images/',default = 'default.png')
+    image3 = models.ImageField(upload_to = 'product_images/',default = 'default.png')
     
     def save(self):
         """ This function changes the resolution of the image before saving it """
@@ -24,6 +25,9 @@ class Product(models.Model):
     def active_images(self):
         """ This function returns all the active images in the product """
         return [img for img in [self.image1,self.image2,self.image3] if img]
+    
+    def get_absolute_url(self):
+        return reverse("control:admin_home")
         
                 
     def __str__(self):
@@ -49,6 +53,9 @@ class CartItems(models.Model):
 class NewsLetters(models.Model):
     """ This model stores all the emails that will be used to send newsletters """
     email = models.EmailField()
+    
+    def __str__(self):
+        return self.email
     
 class BillingAddress(models.Model):
     user = models.OneToOneField(User,on_delete = models.CASCADE)

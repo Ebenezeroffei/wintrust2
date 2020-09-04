@@ -20,9 +20,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('central/', admin.site.urls),
     path('', include('app.urls')),
     path('', include('user.urls')),
+    path('admin/', include('control.urls')),
     path(
         'password-reset-confirm/<uidb64>/<token>/',
         auth_views.PasswordResetConfirmView.as_view(

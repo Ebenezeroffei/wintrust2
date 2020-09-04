@@ -1,7 +1,9 @@
 from django.shortcuts import render,get_object_or_404
 from django.http import JsonResponse
 from django.views import generic
-from .models import Product,CartItems,BillingAddress
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from .models import Product,CartItems,BillingAddress,NewsLetters
 from .forms import BillingAddressForm
 
 
@@ -29,7 +31,8 @@ class ProductDetailView(generic.DetailView):
     
     def get_context_data(self,*args,**kwargs):
         context = super().get_context_data(*args,**kwargs)
-        context['goods'] = Product.objects.all()
+        good = super().get_object()
+        context['goods'] = Product.objects.all().exclude(id = good.id)
         important_info(self,context)
         return context
     
@@ -186,6 +189,7 @@ class CheckoutView(generic.View):
     form_class = BillingAddressForm
     template_name = 'app/checkout.html'
     
+    @method_decorator(login_required)
     def get(self,request,*args,**kwargs):
         try:
             billing = request.user.billingaddress
@@ -201,12 +205,19 @@ class CheckoutView(generic.View):
             'form':form
         }
         important_info(self,context)
+        context['cart_items'] = request.user.cart.cartitems_set.all()
         return render(request,self.template_name,context)
     
+    
+    @method_decorator(login_required)
     def post(self,request,*args,**kwargs):
         try:
             billing = request.user.billingaddress
             form = self.form_class(request.POST,instance = billing)
+            if form.is_valid() and form.changed_data:
+                form.instance.user = request.user
+                form.save()
+                
         except BillingAddress.DoesNotExist:
             initial = {
                 'first_name':request.user.first_name,
@@ -214,8 +225,41 @@ class CheckoutView(generic.View):
                 'email': request.user.email
             }
             form = self.form_class(request.POST,initial = initial)
+            if form.is_valid and form.changed_data:
+                form.instance.user = request.user
+                form.save()
+                
         context = {
             'form':form
         }
         important_info(self,context)
+        context['cart_items'] = request.user.cart.cartitems_set.all()
+        
         return render(request,self.template_name,context)
+    
+
+class SearchResultsView(generic.View):
+    """ This class returns all matched items in the searchbar """
+    
+    def get(self,request,*args,**kwargs):
+        q = request.GET.get('q')
+        data = {
+            'products': {product.name: product.id for product in  Product.objects.filter(name__icontains = q)[:5]}
+        }
+        data['results'] = True if data['products'] else False
+#        print(data)
+        return JsonResponse(data)
+
+class NewsLettersView(generic.View):
+    """ This class adds a new email to the news letters """
+    
+    def get(self,request,*args,**kwargs):
+        email = request.GET.get('email')
+        try:
+            get_object_or_404(NewsLetters,email = email)
+            print("This email is already in the database")
+        except NewsLetters.DoesNotExist:
+            news_letters = NewsLetters(email = email)
+            news_letters.save()
+            print("This email is not present")
+        return JsonResponse({})

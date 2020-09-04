@@ -1,0 +1,56 @@
+{% extends 'control/base.html' %}
+{% load static %}
+
+
+{% block head %}
+    <title>{{ good.product_name }}</title>
+{% endblock %}
+{% block content %}
+    <div class="container-fluid" style="margin-top: 70px;">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <p class="text-muted">Product Detail</p>
+                <div class="card" style="height: 350px;">
+                    <div class="row no-gutters">
+                        <div class="col border-right">
+                            <img height="348px" src="{{ good.product_image.url }}" class = 'card-img-top' alt="{{ good.product_name }} image">
+                        </div>
+                        <div class="col p-1">
+                            <p class = 'text-info m-auto ' >Name: <span class = 'text-dark'>{{ good.product_name }}</span></p>
+                            <p class = 'text-info m-auto ' >Price: <span class = 'text-dark'>GHC {{ good.product_price }}</span></p>
+                            <p class = 'text-info m-auto ' >Description: <span class = 'text-dark'>{{ good.product_description }}</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 mt-3 mt-md-0">
+                <p class="text-muted">Analysis</p>
+                <div class="card border-bottom-0" style="height: 350px">
+                    <canvas id="myChart" width = '100%' height = '59'></canvas>
+                </div>
+            </div>
+        </div>
+        <p class="text-muted mt-5">Reviews</p>
+        <p class="text-center lead border p-4">No Reviews</p>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+            // The data for our dataset
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [{
+                    label: 'Products Bought',
+                    borderColor: '#535353',
+                    data: [0, 10, 5, 2, 20, 30, 45]
+                }]
+            },
+            // Configuration options go here
+            options: {}
+        })
+    </script>
+{% endblock %}

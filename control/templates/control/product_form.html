@@ -1,0 +1,302 @@
+{% extends 'control/base.html' %}
+{% load static %}
+
+
+{% block head %}
+    <title>New Product</title>
+    <style>
+        /* Main Container - Preview */
+        #qty-container p{
+            display: inline-block;
+        }
+        #qty-container p:nth-child(2){
+            border: thin solid rgba(0,0,0,.125);
+            padding: 5px;
+            user-select: none;
+        }
+        #qty-container p:nth-child(2) span{
+            padding: 0px 15px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        #qty-container p:nth-child(2) span:hover{
+            color: #159fdc
+        }
+        #add{
+            background: #159fdc;
+            padding: 5px 0px;
+            color: white;
+            border: thin solid #159fdc;
+            text-align: center;
+            transition: all .3s ease-in-out;
+            cursor: pointer;
+        }
+        #add:hover{
+            color: #159fdc;
+            background: white;
+        }
+        #other-images-container{
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(3,1fr)
+        }
+        #other-images-container > img:first-child{
+            opacity: 1;
+            border: thin solid #159fdc;
+        }
+        #other-images-container > img{
+            cursor: pointer;
+            width: 100%;
+            opacity: .7;
+            transition: all .1s ease-in-out;
+        }
+        #other-images-container > img:hover{
+            opacity: 1;
+        }
+        /* Program */
+        form input[type = 'submit']{
+            background: #159fdc;
+            border-radius: 2px;
+            color: #333333;
+            transition: all .2s ease-in-out;
+        }
+        form input[type = 'submit']:hover{
+            color: #159fdc;
+            background: #333333;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container" style="margin-top: 80px;">
+      <div class="row">
+          <div class="col-sm-5">
+            <h4 class="text-muted">Preview</h4><hr>
+           <!-- Preview -->
+           {% if update %}
+                <div class="row" id="main-container">
+                    <div class="col-12">
+                        <img id="main-image" width="100%" height="300px;" src="{{ good.image1.url }}" alt="">
+                        <div id="other-images-container">
+                            {% for img in good.active_images %}
+                                <img src="{{ img.url }}" alt="">
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <h1 class="text-center" style="font-size: 1.6rem;color: #333333;font-weight: 400;" id="product-name">{{ good.name }}</h1>
+                        <h1 class="text-center" style="font-size: 1.6rem;color: #159fdc;font-weight: 400;" id="product-price">GHC {{ good.price }}</h1>
+                        <p class="text-muted text-center" id="product-description">{{ good.description }}</p>
+                        <div class="text-center" id="qty-container">
+                            <p class="text-muted mr-3">Qty:</p>
+                            <p class="text-muted">
+                                <span id="decrease">-</span>
+                                <span id = 'qty'>1</span>
+                                <span id="increase">+</span>
+                            </p>
+                        </div>
+                        <p id="add">ADD TO CART</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row" id="main-container">
+                    <div class="col-12">
+                        <img id="main-image" width="100%" height="300px;" src="{% static 'app/images/image1.png' %}" alt="Main Image">
+                        <div id="other-images-container">
+                            <img src="{% static 'app/images/image1.png' %}" alt="Image 1">
+                            <img src="{% static 'app/images/image2.png' %}" alt="Image 2">
+                            <img src="{% static 'app/images/image3.png' %}" alt="Image 3">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <h1 class="text-center" style="font-size: 1.6rem;color: #333333;font-weight: 400;" id="product-name">Poduct Name</h1>
+                        <h1 class="text-center" style="font-size: 1.6rem;color: #159fdc;font-weight: 400;" id="product-price">Product Price</h1>
+                        <p class="text-muted text-center" id="product-description">Product Description</p>
+                        <div class="text-center" id="qty-container">
+                            <p class="text-muted mr-3">Qty:</p>
+                            <p class="text-muted">
+                                <span id="decrease">-</span>
+                                <span id = 'qty'>1</span>
+                                <span id="increase">+</span>
+                            </p>
+                        </div>
+                        <p id="add">ADD TO CART</p>
+                    </div>
+                </div>
+            {% endif %}
+          </div>
+          <div class="col-sm-7">
+              <!-- Program -->
+            <h4 class="text-muted mt-5 mt-sm-0">Program</h4><hr>
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <!-- Name -->
+                <div class="form-group">
+                    {{form.name.label_tag}}
+                    {{form.name}}
+                </div>
+                <!-- Price -->
+                <div class="form-group">
+                    {{form.price.label_tag}}
+                    {{form.price}}
+                </div>
+                <!-- Image 1 -->
+                <div class="form-group">
+                    <label for="">Image 1:</label>
+                    <p class="text-info small m-auto" id="image1-info">No File Uploaded</p>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="id_image1">Upload</span>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" name="image1" accept="image/*" class="custom-file-input" id = 'id_image1'>
+                            <label for="id_image1" class="custom-file-label">Choose File</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Image 2 -->
+                <div class="form-group">
+                    <label for="">Image 2:</label>
+                    <p class="text-info small m-auto" id="image2-info">No File Uploaded</p>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="id_image2">Upload</span>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" accept="image/*" name="image2" class="custom-file-input" id = 'id_image2'>
+                            <label for="id_image2" class="custom-file-label">Choose File</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Image 3 -->
+                <div class="form-group">
+                   <p class="text-info small m-auto" id="image3-info">No File Uploaded</p>
+                    <label for="">Image 3:</label>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="id_image3">Upload</span>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" accept="image/*" name="image3" class="custom-file-input" id = 'id_image3'>
+                            <label for="id_image3" class="custom-file-label">Choose File</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Description -->
+                <p class="text-muted small m-auto">4/500</p>
+                <div class="form-group">
+                    {{form.description}}
+                </div>
+                {% if update %}
+                    <input type="submit" class="btn btn-block mt-3 mb-3" value="Save Changes">
+                {% else %}
+                    <input type="submit" value="Add Product" class="btn btn-block mt-3 mb-3">
+                {% endif %}
+            </form>
+          </div>
+      </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+//        let productImage = document.getElementById('id_image');
+        // Add some boostrap styling to the form
+        $('#id_name, #id_price, #id_description').attr('class','form-control form-control-sm')
+        
+        // A function that will be updating the preview section of the product
+        let updatePreview = () => {
+            // Product Name
+            $('#id_name').keyup(function(){
+                let productNameValue = $(this).val();
+                if(productNameValue){
+                    $('#product-name').text(productNameValue);
+                }
+                else{
+                    $('#product-name').text('Product Name');
+                }
+            });
+            
+            // Product Price
+            $('#id_price').keyup(function(){
+                let productPriceValue = $(this).val();
+                let productPriceFilter = /^\d+(\.\d\d?)?$/;
+                if(!productPriceFilter.test(productPriceValue) && productPriceValue){
+                    let productPriceList = productPriceValue.split('.'); 
+                    productPriceList[1] = productPriceList[1].slice(0,2);
+                    $(this).val(productPriceList.join('.'));
+                    productPriceValue = productPriceList.join('.');
+                }
+                if(productPriceValue){
+                    $('#product-price').html(`GHC ${productPriceValue}`);
+                }
+                else{
+                    $('#product-price').text('Product Price');
+                }
+            });
+            
+            // Product Description
+            $('#id_description').keyup(function(){
+                let productDescriptionValue = $(this).val();
+                if(productDescriptionValue){
+                    $("#product-description").text(productDescriptionValue);
+                }
+                else{
+                    $('#product-description').text('Product Description');
+                }
+            });
+            
+            // Product Image
+            $('#id_product_image').change(function(){
+                console.log(productImage.files)
+                if(productImage.files[0]){
+                    file = new FileReader();
+                    file.onload = () => {
+                        $('#preview-product-image').attr('src',file.result);
+                    }
+                    file.readAsDataURL(productImage.files[0]);
+                }
+            });
+        }
+        updatePreview();
+        // A function that increases or decreases the quantity of an item
+        let modifyQuantity = () => {
+            // Increase Quantity
+            $('#increase').click(function(){
+                let qty = $('#qty');
+                if(Number(qty.text()) + 1 < 100){
+                    qty.text(`${Number(qty.text()) + 1}`)
+                }
+            });
+            
+            // Decrease Quantity
+            $('#decrease').click(function(){
+                let qty = $('#qty');
+                if(Number(qty.text()) - 1 > 0){
+                    qty.text(`${Number(qty.text()) - 1}`)
+                }
+            });
+        }
+        modifyQuantity()
+        
+        // A function that changes the image of the main product
+        let changeImage = () => {
+            let currentImageIndex = 0;
+            $('#other-images-container img').click(function(){
+                $('#other-images-container img').eq(currentImageIndex).css({'opacity':'.7','border':'none'});
+                $(this).css({'opacity':'1','border':'thin solid #159fdc'});
+                $('#main-image').attr('src',$(this).attr('src'));
+                currentImageIndex = $('#other-images-container img').index($(this));
+            });
+        }
+        
+        changeImage()
+        
+        // A function that add some bootstrap to the normal file input
+        let changedImage = () => {
+            $('input[type = "file"]').change(function(){
+                console.log("Hello world");
+                $(this).parent().parent().parent().find('p').first().text('File has been uploaded').attr('class','text-success small m-auto')
+            });
+        }
+        changedImage()
+    </script>
+{% endblock %}

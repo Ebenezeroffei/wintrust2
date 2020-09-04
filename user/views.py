@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
 from django.views import View,generic
-from app.models import Cart
+from app.models import Cart,NewsLetters
 from .forms import NewUser,EditUserProfileForm
 from app.views import important_info
 
@@ -38,6 +38,12 @@ class SignUpUser(View):
             # Create the cart for the user
             cart = Cart(user = user)
             cart.save()
+            # Add the user's email to the news letters
+            try:
+                get_object_or_404(NewsLetters,email = form.cleaned_data.get('email'))
+            except NewsLetters.DoesNotExist:
+                news_letters = NewsLetters(email = form.cleaned_data.get('username'))
+                news_letters.save()
             messages.success(request,f'You account has been succesfully created, you can sign in now.')
             return HttpResponseRedirect(reverse('user:signin'))
         return render(request,self.template_name,{'form':form})

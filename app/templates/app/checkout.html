@@ -14,12 +14,30 @@
             color: #159fdc;
             background: #333333;
         }
+        /* Seperations */
+        .sep-1, .sep-2{
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+        }
+        .sep-1 > p:last-child, .sep-2 > p:last-child{
+            text-align: right;
+        }
+        .sep-1 p{
+            color: #333333;
+        }
+        .sep-2 p{
+            font-size: 13px;
+            color: lightslategray;
+        }
+        .sep-1:last-child p{
+            color: #159fdc;
+        }
     </style>
 {% endblock %}
 {% block content %}
     <div class="container-fluid" style="margin-top: 120px">
         <div class="row">
-            <div class="col-8">
+            <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
                       <form action="." method="post">
@@ -41,8 +59,74 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-4 mt-5 mt-md-0 mb-5 mb-md-0">
+                <div class="card" style="border: thin dashed lightslategray">
+                    <div class="card-body">
+                        <p>Your Order</p>
+                        <hr class="border-secondary">
+                        <div class="sep-1">
+                            <p>Product</p>
+                            <p>Total</p>
+                        </div>
+                        {% for good in cart_items %}
+                            <div class="sep-2">
+                                <p>{{ good.product.name }}</p>
+                                <p class="good {{good.quantity}}-{{good.product.price}}"></p>
+                            </div>
+                        {% endfor %}
+                        <hr>
+                        <div class="sep-1">
+                            <p>Subtotal:</p>
+                            <p id="subtotal"></p>
+                        </div>
+                        <hr>
+                        <div class="sep-2">
+                            <p>Shipping:</p>
+                            <p>Free Shipping</p>
+                        </div>
+                        <hr>
+                        <div class="sep-1">
+                            <p>Total</p>
+                            <p id="total"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
 {% block javascript %}
+    <script>
+        // A function that invokes when the page reloads
+        let callWhenPageReloads = () => {
+            let cartSubtotal = 0;
+            // Subtotal for each good
+            $('.good').each(function(){
+                let subtotal = Number($(this).attr('class').slice(5,).split('-')[0]) * Number($(this).attr('class').slice(5,).split('-')[1]);
+                cartSubtotal += subtotal;
+                subtotal = String(subtotal).split('.');
+                if(subtotal.length > 1){
+                    subtotal[1] = subtotal[1].slice(0,2).padEnd(2,'0');
+                }
+                else{
+                    subtotal.push('00');
+                }
+                $(this).html(`GHC ${subtotal.join('.')}`);
+            });
+            
+            // Subtotal for all the goods in the cart
+            cartSubtotal = String(cartSubtotal).split('.');
+            if(cartSubtotal.length > 1){
+                cartSubtotal[1] = scartSbtotal[1].slice(0,2).padEnd(2,'0');
+            }
+            else{
+                cartSubtotal.push('00');
+            }
+            $('#subtotal').html(`GHC ${cartSubtotal.join('.')}`);
+            
+            // Total for all the items in the cart and the shipping fees
+            $('#total').html(`GHC ${cartSubtotal.join('.')}`);
+        }
+        callWhenPageReloads()
+    </script>
 {% endblock %}

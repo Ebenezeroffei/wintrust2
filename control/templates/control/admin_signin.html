@@ -1,0 +1,43 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Admin Sign In</title>
+    <link rel="stylesheet" href="{% static 'control/bootstrap.min.css' %}">
+    <style>
+        body{
+            margin: auto;
+            background-image: linear-gradient(45deg,#00a8f3,royalblue,skyblue);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="card mt-5" style="max-width: 500px;margin: auto;">
+        <div class="card-header text-center text-primary">Sign In (Admin)</div>
+        <div class="card-body">
+            {% if error %}
+                <p class = 'alert alert-danger'>{{ error }}</p>
+            {% endif %}
+            <form action="." method = 'post'>
+                {% csrf_token %}
+                <div class="form-group">
+                   <label for="id_username">Username</label>
+                    <input type="text" required class="form-control" name = 'username' id="id_username">
+                </div>
+                <div class="form-group">
+                   <label for="id_password">Password</label>
+                    <input type="password" required class="form-control" id="id_password" name = 'password'>
+                </div>
+                <button class="btn btn-block btn-primary mt-4 mb-3">Sign In</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
