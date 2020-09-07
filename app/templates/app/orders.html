@@ -15,15 +15,6 @@
             left: 160px;
             transition: all .2s ease-in-out;
         }
-        #main-menu > form > div:last-child > button{
-            color: #333333;
-            background: #159fdc;
-            transition: all .15s ease-in-out;
-        }
-        #main-menu > form > div:last-child > button:hover{
-            color: #159fdc;
-            background: #333333;
-        }
         /* Side Menu */
         #side-menu{
             width: 150px;
@@ -86,18 +77,18 @@
         <div id="side-menu">
             <h5 class="text-center text-dark">User Profile</h5>
             <!-- Big Screen -->
-            <a href="{% url 'user:profile' %}" id="active">User Info</a>
+            <a href="{% url 'user:profile' %}">User Info</a>
             <a href="{% url 'app:cart' %}">Cart &nbsp; <span class="badge badge-dark">{{ cart_items_count }}</span></a>
-            <a href="{% url 'app:orders' %}">Orders</a>
+            <a href="{% url 'app:orders' %}" id ='active'>Orders</a>
             <a href="{% url 'user:logout' %}">Logout</a>
             <!-- Small Screen -->
-            <a href="{% url 'user:profile' %}" class = 'small-screen-item-link' id="active" >
+            <a href="{% url 'user:profile' %}" class = 'small-screen-item-link'>
                 <img width="40px" src="{% static 'app/images/user-profile.png' %}" alt="Profile">
             </a>
             <a href="{% url 'app:cart' %}" class = 'small-screen-item-link'>
                <img width="40px" src="{% static 'app/images/cart-small.png' %}" alt="Cart">
             </a>
-            <a href="{% url 'app:orders' %}" class = 'small-screen-item-link' >
+            <a href="" class = 'small-screen-item-link' id="active" >
                 <img width="40px" src="{% static 'app/images/order.png' %}" alt="Orders">
             </a>
             <a href="{% url 'user:logout' %}" class = 'small-screen-item-link' >
@@ -105,22 +96,7 @@
             </a>
         </div>
         <div id="main-menu">
-            <form action="." method="post" style="max-width: 800px;margin: auto;">
-                {% csrf_token %}
-                <div class="row no-gutters">
-                    {% for field in form %}
-                        <div class="col-sm-6 p-2">
-                            <div class="form-group">
-                                {{ field.label_tag }}
-                                {{ field }}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div style = 'max-width: 400px;margin: 20px auto;'>
-                    <button type="submit" class="btn btn-block"> Save Changes</button>
-                </div>
-            </form>
+            
         </div>
     </div>
 {% endblock %}

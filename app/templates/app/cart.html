@@ -13,6 +13,7 @@
             display: inline-block;
             position: relative;
             left: 160px;
+            transition: all .2s ease-in-out;
         }
 /*
         #qty-container p{
@@ -107,6 +108,7 @@
             left: 0px;
             top: 120px;
 /*            border: thin solid red;*/
+            transition: all .2s ease-in-out;
         }
         #side-menu a{
             display: block;
@@ -123,11 +125,15 @@
             border-right: medium solid #159fdc;
             color: #159fdc;
         }
-        #side-menu > a:last-child{
+        #side-menu > a:not('.small-screen-item-link'):last-child{
             color: red;
         }
-        #side-menu > a:last-child:hover{
+        #side-menu > a:not('.small-screen-item-link'):last-child:hover{
             color: red;
+        }
+        /* Hide Small Screen Icons */
+        #side-menu a.small-screen-item-link{
+            display: none;
         }
         
         /* Media Query 0px - 767px */
@@ -160,16 +166,49 @@
                 font-size: 16px;
             }
         }
+        
+        /* Media query from 0px - 500px */
+        @media only screen and (max-width:500px){
+            /* Side Menu */
+            #side-menu{
+                width: 50px;
+            }
+            #side-menu h5, #side-menu a{
+                display: none;
+            }
+            #side-menu > a.small-screen-item-link{
+                display: block;
+            }
+            /* Main Menu */
+            #main-menu{
+                width: calc(100% - 60px);
+                left: 55px;
+            }
+        }
     </style>
 {% endblock %}
 {% block content %}
     <div id="wrapper" style = 'margin-top: 120px;'>
         <div id="side-menu">
             <h5 class="text-center text-dark">Cart</h5>
+            <!-- Big Screen -->
             <a href="{% url 'user:profile' %}">User Info</a>
             <a href="{% url 'app:cart' %}" id="active">Cart &nbsp; <span class="badge badge-dark">{{ cart_items_count }}</span></a>
-            <a href="">Address</a>
+            <a href="{% url 'app:orders' %}">Orders</a>
             <a href="{% url 'user:logout' %}">Logout</a>
+            <!-- Small Screen -->
+            <a href="{% url 'user:profile' %}" class = 'small-screen-item-link' >
+                <img width="40px" src="{% static 'app/images/user-profile.png' %}" alt="Profile">
+            </a>
+            <a href="{% url 'app:cart' %}" class = 'small-screen-item-link'  id="active">
+               <img width="40px" src="{% static 'app/images/cart-small.png' %}" alt="Cart">
+            </a>
+            <a href="{% url 'app:orders' %}" class = 'small-screen-item-link' >
+                <img width="40px" src="{% static 'app/images/order.png' %}" alt="Orders">
+            </a>
+            <a href="{% url 'user:logout' %}" class = 'small-screen-item-link' >
+                <img width="40px" src="{% static 'app/images/logout-small.png' %}" alt="Logout">
+            </a>
         </div>
         <div id="main-menu">
             {% if user.is_authenticated %}
@@ -510,5 +549,6 @@
             $('#total').html(`GHC ${calculateTotal()}`);
         }
         init();
+        
     </script>
 {% endblock %}

@@ -263,3 +263,10 @@ class NewsLettersView(generic.View):
             news_letters.save()
             print("This email is not present")
         return JsonResponse({})
+    
+class OrdersView(generic.View):
+    """ This shows all the orders the user has made """
+    
+    @method_decorator(login_required)
+    def dispatch(self,request,*args,**kwargs):
+        return render(request,'app/orders.html')

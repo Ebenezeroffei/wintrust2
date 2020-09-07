@@ -182,7 +182,7 @@
                     </div>
                 </div>
                 <!-- Description -->
-                <p class="text-muted small m-auto">4/500</p>
+                <p class="text-muted small m-auto" id="description-count"></p>
                 <div class="form-group">
                     {{form.description}}
                 </div>
@@ -199,8 +199,18 @@
 {% block javascript %}
     <script>
 //        let productImage = document.getElementById('id_image');
-        // Add some boostrap styling to the form
-        $('#id_name, #id_price, #id_description').attr('class','form-control form-control-sm')
+        
+        // A function that runs when the page loads
+        let init = () => {
+            // Show the number of characters in the textbox
+            let descriptionValue = $('#id_description').val().length;
+            $('#description-count').text(`${descriptionValue}/500`);
+            
+            // Add some boostrap styling to the form
+            $('#id_name, #id_price, #id_description').attr('class','form-control form-control-sm');
+        }
+        
+        init()
         
         // A function that will be updating the preview section of the product
         let updatePreview = () => {
@@ -234,13 +244,24 @@
             });
             
             // Product Description
-            $('#id_description').keyup(function(){
+            $('#id_description').keyup(function(e){
                 let productDescriptionValue = $(this).val();
+                let descriptionCount = $('#description-count');
                 if(productDescriptionValue){
                     $("#product-description").text(productDescriptionValue);
+                    if(productDescriptionValue.length < 501){
+                        descriptionCount.text(`${productDescriptionValue.length}/500`);
+                    }   
+                    else{
+                        $(this).attr('disabled','true');
+                    }
                 }
                 else{
                     $('#product-description').text('Product Description');
+                }
+                if(e.key === 'Backspace'){
+                    $(this).removeAttr('disabled');
+                    descriptionCount.text(`${productDescriptionValue.length}/500`);
                 }
             });
             
@@ -293,10 +314,10 @@
         // A function that add some bootstrap to the normal file input
         let changedImage = () => {
             $('input[type = "file"]').change(function(){
-                console.log("Hello world");
-                $(this).parent().parent().parent().find('p').first().text('File has been uploaded').attr('class','text-success small m-auto')
+                $(this).parent().parent().parent().find('p').first().text('File has been uploaded').attr('class','text-success small m-auto');
             });
         }
         changedImage()
+        
     </script>
 {% endblock %}
