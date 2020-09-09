@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils import timezone
 from PIL import Image
 
 # Create your models here.
@@ -68,7 +69,20 @@ class BillingAddress(models.Model):
     email = models.EmailField()
     post_or_zipcode = models.CharField("Postcode/ZIP",max_length = 50)
     
-    def _str_(self):
+    def __str__(self):
         return f"{self.user.username}'s Billing Address"
     
+class Orders(models.Model):
+    """ This class takes in all the orders that a user has made """
+    user = models.OneToOneField(User,on_delete = models.CASCADE)
     
+    def __str__(self):
+        return f"{self.user.username}'s Orders"
+    
+class OrderItems(models.Model):
+    order = models.ForeignKey(Orders,on_delete = models.CASCADE)
+    text = models.CharField(max_length = 500)
+    date = models.DateTimeField(default = timezone.now)
+    
+    def __str__(self):
+        return f"Order for {self.order.user.username}"

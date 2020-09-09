@@ -1,8 +1,11 @@
-setTimeout(function(){
-    $('#news-letter-container').css({'visibility':'visible','opacity':'1'});
-    $('body').css('overflow','hidden');
-    console.log("alright");
-},2000);
+// Disable NewsLetter
+//setTimeout(function(){
+//    $('#news-letter-container').css({'visibility':'visible','opacity':'1'});
+//    $('body').css('overflow','hidden');
+//    console.log("alright");
+//},2000);
+
+
 
 // A function that will close the news letter container when clicked on
 let closeNewsLetter = (url) => {

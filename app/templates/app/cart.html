@@ -125,12 +125,6 @@
             border-right: medium solid #159fdc;
             color: #159fdc;
         }
-        #side-menu > a:not('.small-screen-item-link'):last-child{
-            color: red;
-        }
-        #side-menu > a:not('.small-screen-item-link'):last-child:hover{
-            color: red;
-        }
         /* Hide Small Screen Icons */
         #side-menu a.small-screen-item-link{
             display: none;
@@ -194,8 +188,8 @@
             <!-- Big Screen -->
             <a href="{% url 'user:profile' %}">User Info</a>
             <a href="{% url 'app:cart' %}" id="active">Cart &nbsp; <span class="badge badge-dark">{{ cart_items_count }}</span></a>
-            <a href="{% url 'app:orders' %}">Orders</a>
-            <a href="{% url 'user:logout' %}">Logout</a>
+            <a href="{% url 'app:orders' %}">Orders &nbsp; <span class="badge badge-dark">{% firstof user.orders.orderitems_set.count '0' %}</span></a>
+            <a href="{% url 'user:logout' %}" style="color: red;">Logout</a>
             <!-- Small Screen -->
             <a href="{% url 'user:profile' %}" class = 'small-screen-item-link' >
                 <img width="40px" src="{% static 'app/images/user-profile.png' %}" alt="Profile">

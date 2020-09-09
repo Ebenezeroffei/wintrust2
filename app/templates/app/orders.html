@@ -15,6 +15,20 @@
             left: 160px;
             transition: all .2s ease-in-out;
         }
+        /* No Item */
+        #no-item > div > a{
+            color: #333333;
+            background: #159fdc;
+            transition: all .2s ease-in-out;
+            border-radius: 2px;
+        }
+        #no-item > div > a:hover{
+            color: #159fdc;
+            background: #333333;
+            box-shadow: 0px 5px 25px rgba(0,0,0,.3)
+        }
+        
+        
         /* Side Menu */
         #side-menu{
             width: 150px;
@@ -40,12 +54,6 @@
         #side-menu #active{
             border-right: medium solid #159fdc;
             color: #159fdc;
-        }
-        #side-menu > a:not('.small-screen-item-link'):last-child{
-            color: red;
-        }
-        #side-menu > a:not('.small-screen-item-link'):last-child:hover{
-            color: red;
         }
         /* Hide Small Screen Icons */
         #side-menu a.small-screen-item-link{
@@ -75,12 +83,12 @@
 {% block content %}
     <div id="wrapper" style = 'margin-top: 120px;'>
         <div id="side-menu">
-            <h5 class="text-center text-dark">User Profile</h5>
+            <h5 class="text-center text-dark">Orders</h5>
             <!-- Big Screen -->
             <a href="{% url 'user:profile' %}">User Info</a>
             <a href="{% url 'app:cart' %}">Cart &nbsp; <span class="badge badge-dark">{{ cart_items_count }}</span></a>
-            <a href="{% url 'app:orders' %}" id ='active'>Orders</a>
-            <a href="{% url 'user:logout' %}">Logout</a>
+            <a href="{% url 'app:orders' %}" id ='active'>Orders &nbsp; <span class="badge badge-dark">{% firstof user.orders.orderitems_set.count '0' %}</span></a>
+            <a href="{% url 'user:logout' %}" style="color: red;">Logout</a>
             <!-- Small Screen -->
             <a href="{% url 'user:profile' %}" class = 'small-screen-item-link'>
                 <img width="40px" src="{% static 'app/images/user-profile.png' %}" alt="Profile">
@@ -96,7 +104,23 @@
             </a>
         </div>
         <div id="main-menu">
-            
+            {% if orders %}
+                <ul class="list-group" style="box-shadow: 0px 2px 5px rgba(0,0,0,.2)">
+                    {% for order in orders %}
+                        <li class="list-group-item">
+                           {{ order.text }}
+                            <p class="text-muted small m-auto">{{ order.date|date:'jS M, Y' }} - {{ order.date|time:'g:i.sa' }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div id = 'no-item'>
+                    <h3 class="text-muted text-center mt-5">Sorry! You haven't made any orders yet...</h3>
+                    <div style="max-width: 400px;margin: 20px auto">
+                        <a href="{% url 'app:home' %}" class = 'btn btn-block'>Continue Shopping</a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

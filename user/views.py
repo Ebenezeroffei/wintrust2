@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
 from django.views import View,generic
-from app.models import Cart,NewsLetters
+from app.models import Cart,NewsLetters,Orders
 from .forms import NewUser,EditUserProfileForm
 from app.views import important_info
 
@@ -38,6 +38,9 @@ class SignUpUser(View):
             # Create the cart for the user
             cart = Cart(user = user)
             cart.save()
+            # Create the user's orders
+            order = Orders(user = user)
+            order.save()
             # Add the user's email to the news letters
             try:
                 get_object_or_404(NewsLetters,email = form.cleaned_data.get('email'))

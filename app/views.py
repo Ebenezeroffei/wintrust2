@@ -269,4 +269,8 @@ class OrdersView(generic.View):
     
     @method_decorator(login_required)
     def dispatch(self,request,*args,**kwargs):
-        return render(request,'app/orders.html')
+        context = {
+            'orders' : [order for order in request.user.orders.orderitems_set.all()]
+        }
+        important_info(self,context)
+        return render(request,'app/orders.html',context)

@@ -18,13 +18,13 @@
             {% for good in goods %}
                 <div class="col-6 col-sm-4 col-md-3 mt-2">
                     <div class="card" style="box-shadow: 0px 2px 5px rgba(0,0,0,.3);">
-                        <a href="{% url 'control:admin_product_detail' good.pk %}">
+<!--                        <a href="{% url 'control:admin_product_detail' good.pk %}">-->
                            <img height="140px" src="{{ good.image1.url }}" class="card-img-top" alt="">
-                        </a>
+<!--                        </a>-->
                         <div class="card-body">
-                           <a href="{% url 'control:admin_product_detail' good.pk %}">
+<!--                           <a href="{% url 'control:admin_product_detail' good.pk %}">-->
                                <p class="text-center">{{ good.name }}</p>
-                           </a>
+<!--                           </a>-->
                             <a href="{% url 'control:update_product' good.pk %}" class="btn-block btn btn-sm btn-primary">Edit</a>
                             <button data-toggle="modal" id="{{ good.id }}" data-target="#deleteModal" class="btn-block btn btn-sm btn-danger delete">Delete</button>
                         </div>

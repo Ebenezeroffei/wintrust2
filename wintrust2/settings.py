@@ -123,6 +123,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LOGOUT_REDIRECT_URL = 'app:home'
+LOGIN_URL = 'user:signin'
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1026
