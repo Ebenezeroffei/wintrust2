@@ -41,7 +41,12 @@
                 <div class="card">
                     <div class="card-body">
                       <form action="." method="post">
+                         <p id="form-error" class = 'alert'></p>
                           {% csrf_token %}
+                          <!-- Total -->
+                          <input type="hidden" name="total">
+                          <!-- Payment Reference -->
+                          <input type="hidden" name="reference">
                           <div class="row">
                             {% for field in form %}
                                 <div class="col-sm-6">
@@ -53,7 +58,7 @@
                             {% endfor %}
                         </div>
                         <div style = 'max-width: 400px;margin: 20px auto'>
-                            <input type="submit" value="Continue To Payment" class="btn btn-block">
+                            <input type="submit" id="pay" value="Continue To Payment" class="btn btn-block">
                         </div>
                       </form>
                     </div>
@@ -96,6 +101,7 @@
     </div>
 {% endblock %}
 {% block javascript %}
+   <script src="https://js.paystack.co/v1/inline.js"></script>
     <script>
         // A function that invokes when the page reloads
         let callWhenPageReloads = () => {
@@ -126,7 +132,52 @@
             
             // Total for all the items in the cart and the shipping fees
             $('#total').html(`GHC ${cartSubtotal.join('.')}`);
+            $('input[name = total]').val(cartSubtotal.join('.'));
         }
         callWhenPageReloads()
+
+        // A function that allows the user to make payments
+        let payment = () => {
+            $('#pay').click(function(ele){
+                ele.preventDefault();
+                let emailRegex = /^[a-zA-Z][a-zA-Z\d]+@[a-z]+\.[a-z]{3}(\.[a-z]{2,6})?$/;
+                // Get the form data
+                let firstName = $('#id_first_name').val();
+                let lastName = $('#id_last_name').val();
+                let country = $('#id_state_or_country').val();
+                let town = $('#id_town_or_city').val();
+                let phone = $('#id_phone').val();
+                let email = $('#id_email').val();
+                if(firstName && lastName && country && town && phone && emailRegex.test(email)){
+                    console.log("Alright");
+                    // Total
+                    let total = Number($('input[name = total]').val()) * 100;
+                    let form = $(this).parents('form');
+                    // Submit the form
+//                    form.submit()
+                    console.log(total);
+//                     Pay through paystack
+                    let handler = PaystackPop.setup({
+                        key: "pk_test_dd1150330d138de167b39d9be0b180ee8b10319f",
+                        email: email,
+                        currency: 'GHS',
+                        channels: ['card','mobile_money'],
+                        amount: total,
+                        callback: function(response){
+                            // Get the transaction reference
+                            $('input[name = reference]').val(response.reference);
+                            // Submit the form
+                            form.submit();
+                        }
+                    });
+
+                    handler.openIframe();
+                }
+                else{
+                    $('#form-error').text("Make sure you have provided the appropriate information for the input fields.").addClass('alert-danger');
+                }
+            });
+        }
+        payment();
     </script>
 {% endblock %}

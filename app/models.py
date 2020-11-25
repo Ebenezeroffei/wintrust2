@@ -57,9 +57,27 @@ class NewsLetters(models.Model):
     
     def __str__(self):
         return self.email
+
+class OrderItem(models.Model):
+    order = models.ForeignKey('Order',on_delete = models.CASCADE,null = True)
+    product = models.ForeignKey(Product,on_delete = models.SET_NULL,null = True)
+    quantity = models.PositiveSmallIntegerField(default = 0)
+
+    def __str__(self):
+        return f"Order Item"
     
+class Order(models.Model):
+    """ This class takes in all the orders that a user has made """
+    user = models.ForeignKey(User,on_delete = models.CASCADE)
+    delivered = models.BooleanField(default = False)
+    date = models.DateTimeField(default = timezone.now)
+
+    def __str__(self):
+        return f"{self.user.username}'s Orders"
+
 class BillingAddress(models.Model):
-    user = models.OneToOneField(User,on_delete = models.CASCADE)
+    """ This model stores the billing address of an order """
+    order = models.OneToOneField(Order,on_delete = models.CASCADE,null = True)
     first_name = models.CharField(max_length = 100)
     last_name = models.CharField(max_length = 100)
     company_name = models.CharField('Company Name (Optional)',max_length = 100,null = True,blank = True)
@@ -72,17 +90,11 @@ class BillingAddress(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Billing Address"
     
-class Orders(models.Model):
-    """ This class takes in all the orders that a user has made """
-    user = models.OneToOneField(User,on_delete = models.CASCADE)
+class Payment(models.Model):
+    """ This is a model that stores payment details of a transaction """
+    order = models.OneToOneField(Order,on_delete = models.CASCADE)
+    reference = models.CharField(max_length = 100)
+    amount = models.DecimalField(max_digits = 20,decimal_places = 2)
     
     def __str__(self):
-        return f"{self.user.username}'s Orders"
-    
-class OrderItems(models.Model):
-    order = models.ForeignKey(Orders,on_delete = models.CASCADE)
-    text = models.CharField(max_length = 500)
-    date = models.DateTimeField(default = timezone.now)
-    
-    def __str__(self):
-        return f"Order for {self.order.user.username}"
+        return f"Payment for Order {self.order.id}"

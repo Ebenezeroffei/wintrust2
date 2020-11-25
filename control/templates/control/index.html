@@ -12,8 +12,12 @@
 {% endblock %}
 {% block content %}
     <div class="container" style = 'margin-top: 70px;'>
-        <a href="{% url 'control:add_product' %}" class="btn btn-dark btn-block mt-3 mb-3">Add Product</a>
-        <h2 class="text-muted">Products</h2><hr/>
+        <h2 class="text-muted d-flex justify-content-between">
+            Products
+            <div>
+                <a href="{% url 'control:add_product' %}" class="btn btn-dark">Add Product</a>
+            </div>
+        </h2><hr/>
         <div class="row">
             {% for good in goods %}
                 <div class="col-6 col-sm-4 col-md-3 mt-2">

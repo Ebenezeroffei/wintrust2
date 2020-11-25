@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block head %}
-    <title>User Profile</title>
+    <title>Orders</title>
     <style>
         /* Main Menu */
         #main-menu{
@@ -87,7 +87,7 @@
             <!-- Big Screen -->
             <a href="{% url 'user:profile' %}">User Info</a>
             <a href="{% url 'app:cart' %}">Cart &nbsp; <span class="badge badge-dark">{{ cart_items_count }}</span></a>
-            <a href="{% url 'app:orders' %}" id ='active'>Orders &nbsp; <span class="badge badge-dark">{% firstof user.orders.orderitems_set.count '0' %}</span></a>
+            <a href="{% url 'app:orders' %}" id ='active'>Orders &nbsp; <span class="badge badge-dark">{% firstof user.order_set.count '0' %}</span></a>
             <a href="{% url 'user:logout' %}" style="color: red;">Logout</a>
             <!-- Small Screen -->
             <a href="{% url 'user:profile' %}" class = 'small-screen-item-link'>
@@ -108,7 +108,9 @@
                 <ul class="list-group" style="box-shadow: 0px 2px 5px rgba(0,0,0,.2)">
                     {% for order in orders %}
                         <li class="list-group-item">
-                           {{ order.text }}
+                           {% for orderitem in order.order_items %}
+                                <p>{{orderitem.product.name}}</p>
+                           {% endfor %}
                             <p class="text-muted small m-auto">{{ order.date|date:'jS M, Y' }} - {{ order.date|time:'g:i.sa' }}</p>
                         </li>
                     {% endfor %}

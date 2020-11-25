@@ -88,7 +88,7 @@
             <!-- Big Screen -->
             <a href="{% url 'user:profile' %}" id="active">User Info</a>
             <a href="{% url 'app:cart' %}">Cart &nbsp; <span class="badge badge-dark">{{ cart_items_count }}</span></a>
-            <a href="{% url 'app:orders' %}">Orders &nbsp; <span class="badge badge-dark">{% firstof user.orders.orderitems_set.count '0' %}</span></a>
+            <a href="{% url 'app:orders' %}">Orders &nbsp; <span class="badge badge-dark">{% firstof user.order_set.count '0' %}</span></a>
             <a href="{% url 'user:logout' %}" style="color: red;">Logout</a>
             <!-- Small Screen -->
             <a href="{% url 'user:profile' %}" class = 'small-screen-item-link' id="active" >

@@ -3,7 +3,8 @@ from django.http import JsonResponse
 from django.views import generic
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .models import Product,CartItems,BillingAddress,NewsLetters
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Product,CartItems,BillingAddress,NewsLetters,Order,OrderItem,Payment
 from .forms import BillingAddressForm
 
 
@@ -22,7 +23,6 @@ class IndexView(generic.ListView):
     def get_context_data(self,*args,**kwargs):
         context = super().get_context_data(*args,**kwargs)
         important_info(self,context)
-#        print(context)
         return context
     
 class ProductDetailView(generic.DetailView):
@@ -191,16 +191,12 @@ class CheckoutView(generic.View):
     
     @method_decorator(login_required)
     def get(self,request,*args,**kwargs):
-        try:
-            billing = request.user.billingaddress
-            form = self.form_class(instance = billing)
-        except BillingAddress.DoesNotExist:
-            initial = {
-                'first_name':request.user.first_name,
-                'last_name': request.user.last_name,
-                'email': request.user.email
-            }
-            form = self.form_class(initial = initial)
+        initial = {
+            'first_name':request.user.first_name,
+            'last_name': request.user.last_name,
+            'email': request.user.email
+        }
+        form = self.form_class(initial = initial)
         context = {
             'form':form
         }
@@ -211,23 +207,37 @@ class CheckoutView(generic.View):
     
     @method_decorator(login_required)
     def post(self,request,*args,**kwargs):
-        try:
-            billing = request.user.billingaddress
-            form = self.form_class(request.POST,instance = billing)
-            if form.is_valid() and form.changed_data:
-                form.instance.user = request.user
-                form.save()
-                
-        except BillingAddress.DoesNotExist:
-            initial = {
-                'first_name':request.user.first_name,
-                'last_name': request.user.last_name,
-                'email': request.user.email
-            }
-            form = self.form_class(request.POST,initial = initial)
-            if form.is_valid and form.changed_data:
-                form.instance.user = request.user
-                form.save()
+        initial = {
+            'first_name':request.user.first_name,
+            'last_name': request.user.last_name,
+            'email': request.user.email
+        }
+        form = self.form_class(request.POST,initial = initial)
+        if form.is_valid:
+            print("Valid Form")
+            total = request.POST.get('total')
+            print(total);
+#            raise AttributeError
+            reference = request.POST.get('reference')
+            # Create an order
+            order = Order(user = request.user)
+            order.save()
+            # Get the items from the cart
+            for item in request.user.cart.cartitems_set.all():
+                print(item.product,item.quantity)
+                # Create and save an order item
+                order_item = OrderItem(order = order,product = item.product,quantity = item.quantity)
+                order_item.save()
+            # Save the billing address
+            form.instance.order = order
+            form.save()
+
+            # Create and save the payment infomation
+            payment = Payment(order = order,amount = total,reference = reference)
+            payment.save()
+            # Redirect the user to the homepage
+            return HttpResponseRedirect(reverse('app:home'));
+
                 
         context = {
             'form':form
@@ -264,13 +274,13 @@ class NewsLettersView(generic.View):
             print("This email is not present")
         return JsonResponse({})
     
-class OrdersView(generic.View):
+class OrdersView(LoginRequiredMixin,generic.ListView):
     """ This shows all the orders the user has made """
+    model = Order
+    template_name = 'app/orders.html'
+    context_object_name = 'orders'
     
-    @method_decorator(login_required)
-    def dispatch(self,request,*args,**kwargs):
-        context = {
-            'orders' : [order for order in request.user.orders.orderitems_set.all()]
-        }
+    def get_context_data(self,*args,**kwargs):
+        context = super().get_context_data(*args,**kwargs)
         important_info(self,context)
-        return render(request,'app/orders.html',context)
+        return context
