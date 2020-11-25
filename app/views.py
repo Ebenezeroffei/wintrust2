@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponseRedirect
 from django.views import generic
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -235,8 +236,10 @@ class CheckoutView(generic.View):
             # Create and save the payment infomation
             payment = Payment(order = order,amount = total,reference = reference)
             payment.save()
+            # Delete all the items in the users cart
+            request.user.cart.cartitems_set.all().delete()
             # Redirect the user to the homepage
-            return HttpResponseRedirect(reverse('app:home'));
+            return HttpResponseRedirect(reverse('app:orders'));
 
                 
         context = {

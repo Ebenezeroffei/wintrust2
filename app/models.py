@@ -88,7 +88,7 @@ class BillingAddress(models.Model):
     post_or_zipcode = models.CharField("Postcode/ZIP",max_length = 50)
     
     def __str__(self):
-        return f"{self.user.username}'s Billing Address"
+        return f"Order {self.order.id} Billing Address"
     
 class Payment(models.Model):
     """ This is a model that stores payment details of a transaction """

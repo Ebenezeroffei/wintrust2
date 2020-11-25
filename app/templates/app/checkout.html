@@ -123,7 +123,7 @@
             // Subtotal for all the goods in the cart
             cartSubtotal = String(cartSubtotal).split('.');
             if(cartSubtotal.length > 1){
-                cartSubtotal[1] = scartSbtotal[1].slice(0,2).padEnd(2,'0');
+                cartSubtotal[1] = cartSubtotal[1].slice(0,2).padEnd(2,'0');
             }
             else{
                 cartSubtotal.push('00');
@@ -164,10 +164,12 @@
                         channels: ['card','mobile_money'],
                         amount: total,
                         callback: function(response){
-                            // Get the transaction reference
-                            $('input[name = reference]').val(response.reference);
-                            // Submit the form
-                            form.submit();
+                            if(response.reference){
+                                // Get the transaction reference
+                                $('input[name = reference]').val(response.reference);
+                                // Submit the form
+                                form.submit();
+                            }
                         }
                     });
 
