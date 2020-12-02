@@ -287,3 +287,8 @@ class OrdersView(LoginRequiredMixin,generic.ListView):
         context = super().get_context_data(*args,**kwargs)
         important_info(self,context)
         return context
+
+class OrderDetailView(LoginRequiredMixin,generic.DetailView):
+    model = Order
+    context_object_name = 'order'
+#    template_name = 'app/order_detail.html'

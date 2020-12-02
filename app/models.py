@@ -75,6 +75,9 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Orders"
 
+    def items_ordered(self):
+        return sum([item.quantity for item in self.orderitem_set.all()])
+
 class BillingAddress(models.Model):
     """ This model stores the billing address of an order """
     order = models.OneToOneField(Order,on_delete = models.CASCADE,null = True)
